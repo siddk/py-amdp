@@ -20,6 +20,8 @@ data.
                     the parallel data into the relevant structures necessary for each respective 
                     model.
                     
+  + paper/ - Directory containing tex files for RSS paper.
+                    
 ### Data Log ###
 The following records how much data has been collected, as well as the results. Should be added to
 as more data is collected:
