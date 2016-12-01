@@ -10,7 +10,7 @@ from collections import defaultdict
 MIN_PROB = 1.0e-12
 
 
-class IBMModel():
+class IBMModel(object):
     def __init__(self, parallel_corpus):
         """
         Instantiate an abstract IBM Model, with the given parallel corpus.
@@ -19,6 +19,7 @@ class IBMModel():
                     1) List of source sentence tokens.
                     2) List of target sentence tokens.
         """
+        self.pc = parallel_corpus
         self.build_vocab(parallel_corpus)
         self.build_dictionaries()
 
@@ -32,7 +33,8 @@ class IBMModel():
         """
         # Walk through Parallel Corpus and add to Vocabulary
         self.src_vocab, self.trg_vocab = set(), set()
-        for (src, trg) in parallel_corpus:
+        for pair in parallel_corpus:
+            src, trg = pair[1], pair[0]
             self.src_vocab.update(src)
             self.trg_vocab.update(trg)
 
@@ -61,17 +63,13 @@ class IBMModel():
                                                                                      MIN_PROB))))
 
 
-class Counts():
+class Counts(object):
     """
     Auxiliary Object to store counts of various parameters during training.
     """
     def __init__(self):
+        """
+        Instantiate count dictionaries, for maximum likelihood parameter estimation.
+        """
         self.t_given_s = defaultdict(lambda: defaultdict(lambda: 0.0))
         self.any_t_given_s = defaultdict(lambda: 0.0)
-
-    def update_lexical_translation(self, count, alignment_info, j):
-        i = alignment_info.alignment[j]
-        t = alignment_info.trg_sentence[j]
-        s = alignment_info.src_sentence[i]
-        self.t_given_s[t][s] += count
-        self.any_t_given_s[s] += count
