@@ -5,6 +5,8 @@ Core implementation of IBM Model 2 Machine Translation code. First instantiates 
 with the necessary Tau and Delta parameters, then instantiates an IBM 1 Model. Performs Burn-in
 EM Inference via IBM 1, then performs IBM 2 EM to learn alignments.
 """
+import math
+import random
 from collections import defaultdict
 from ibm import IBMModel, Counts, MIN_PROB
 from ibm1 import IBM1
@@ -27,6 +29,8 @@ class IBM2(IBMModel):
         # Burn-In Translation Probabilities via IBM 1 Training, reset current probability matrices
         ibm1 = IBM1(parallel_corpus, burn_in_iters)
         self.tau = ibm1.tau
+
+        self.build_eta()
 
         # Set alignment probabilities to be uniform to start
         self.set_uniform()
@@ -112,6 +116,26 @@ class IBM2(IBMModel):
                                   self.delta[i][j][len(src_sentence) - 1][len(trg_sentence) - 1]
         return alignment_t
 
+    def build_eta(self):
+        """
+        Builds the eta dictionary for storing length priors based on parallel corpus data
+        """
+        lm_counts = defaultdict(lambda: defaultdict(int))
+        l_counts = defaultdict(int)
+
+        for pair in self.pc:
+            src_sentence, trg_sentence = pair[1], pair[0]
+            l, m = len(src_sentence), len(trg_sentence)
+            lm_counts[l][m] += 1
+            l_counts[l] += 1
+
+        for l in l_counts.keys():
+            norm = l_counts[l]
+            for m in lm_counts[l].keys():
+                joint = lm_counts[l][m]
+                p = joint / norm
+                self.eta[l][m] = p
+
     def score(self, src_sentence, trg_sentence):
         """
         Compute probability of translating source sentence into target sentence, by marginalizing
@@ -119,9 +143,70 @@ class IBM2(IBMModel):
 
         TODO - GONNA FIGURE THIS OUT SOON
         """
-        pass
+        l = len(trg_sentence)
+        m = len(src_sentence)
 
+        src_sentence, trg_sentence = [None] + src_sentence, ['UNUSED'] + trg_sentence
 
+        eta = self.eta[l][m]
+        if eta > 0.0:
+            num_samples = 1000
+            align_prob = self.sample_alignments(trg_sentence, src_sentence, num_samples)
+        else:
+            align_prob = self.max_alignment(trg_sentence, src_sentence)
+            
+        return eta * align_prob
+
+    def sample_alignment(self, l, m):
+        alignment = []
+        for i in xrange(m):
+            rand = random.random()
+            sum_p = 0.0
+            for j in xrange(l):
+                p = self.delta[j][i][l][m]
+                sum_p += p
+                if rand < sum_p:
+                    alignment.append(j)
+                    break
+
+        assert len(alignment) == m
+        return alignment
+
+    def max_alignment(self, machine, natural):
+        l = len(machine)
+        m = len(natural)
+
+        prod = 1.0
+        for k in xrange(1,m):
+            pword = natural[k]
+
+            best_match = 0.0
+            for j in xrange(l):
+                word = self.tau[pword][machine[j]]
+                if word > best_match:
+                    best_match = word
+            prod *= best_match
+
+        prob = prod / math.pow(l, m)
+        return prob
+
+    def sample_alignments(self, machine, natural, samples):
+        l = len(machine)
+        m = len(natural)
+
+        ret = 0.0
+        for _ in xrange(samples):
+            sampled = self.sample_alignment(l, m)
+            prod = 1.0
+            for k, ak in enumerate(sampled):
+                pword = natural[k]
+                gword = machine[ak]
+
+                prod *= self.tau[pword][gword]
+            ret += prod
+        ret = ret / samples
+        return ret
+        
 class Model2Counts(Counts):
     """
     Auxiliary object to store counts of various parameters during training. Specifically includes

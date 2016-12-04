@@ -61,6 +61,7 @@ class IBMModel(object):
         self.delta = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda:
                                                                          defaultdict(lambda:
                                                                                      MIN_PROB))))
+        self.eta = defaultdict(lambda: defaultdict(lambda: 0.0))
 
 
 class Counts(object):
