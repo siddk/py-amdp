@@ -5,6 +5,8 @@ Core implementation of IBM Model 2 Machine Translation code. First instantiates 
 with the necessary Tau and Delta parameters, then instantiates an IBM 1 Model. Performs Burn-in
 EM Inference via IBM 1, then performs IBM 2 EM to learn alignments.
 """
+from __future__ import division
+import sys
 import math
 import random
 from collections import defaultdict
@@ -149,23 +151,29 @@ class IBM2(IBMModel):
             num_samples = 1000
             align_prob = self.sample_alignments(trg_sentence, src_sentence, num_samples)
         else:
+            eta = 1.0
             align_prob = self.max_alignment(trg_sentence, src_sentence)
             
         return eta * align_prob
 
     def sample_alignment(self, l, m):
         alignment = []
+        #print 'l',l,'m',m
         for i in xrange(m):
             rand = random.random()
+            #print 'rand',rand
             sum_p = 0.0
             for j in xrange(l):
                 p = self.delta[j][i][l][m]
+                #print 'p',p
                 sum_p += p
+                #print 'sum_p',sum_p
                 if rand < sum_p:
                     alignment.append(j)
                     break
 
-        assert len(alignment) == m
+        #print alignment
+        assert len(alignment) == m # TODO: Is this assertion necessary??
         return alignment
 
     def max_alignment(self, machine, natural):

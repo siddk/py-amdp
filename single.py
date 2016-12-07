@@ -33,8 +33,8 @@ def loo(nl_level, ml_level):
         print 'Training IBM Model 2 on LOO Index:', i
         ibm2 = IBM2(dataset, 15)
 
-        import ipdb
-        ipdb.set_trace()
+        #import ipdb
+        #ipdb.set_trace()
 
         # Score Translations
         best_trans, best_score = None, 0.0
