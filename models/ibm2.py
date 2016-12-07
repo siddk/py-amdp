@@ -140,12 +140,8 @@ class IBM2(IBMModel):
         """
         Compute probability of translating source sentence into target sentence, by marginalizing
         over all alignments.
-
-        TODO - GONNA FIGURE THIS OUT SOON
         """
-        l = len(trg_sentence)
-        m = len(src_sentence)
-
+        l, m = len(trg_sentence), len(src_sentence)
         src_sentence, trg_sentence = [None] + src_sentence, ['UNUSED'] + trg_sentence
 
         eta = self.eta[l][m]
@@ -191,8 +187,7 @@ class IBM2(IBMModel):
         return prob
 
     def sample_alignments(self, machine, natural, samples):
-        l = len(machine)
-        m = len(natural)
+        l, m = len(machine), len(natural)
 
         ret = 0.0
         for _ in xrange(samples):
@@ -206,7 +201,8 @@ class IBM2(IBMModel):
             ret += prod
         ret = ret / samples
         return ret
-        
+
+
 class Model2Counts(Counts):
     """
     Auxiliary object to store counts of various parameters during training. Specifically includes

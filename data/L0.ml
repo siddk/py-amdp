@@ -1,0 +1,11 @@
+agentInRoom agent0 room1
+agentInRoom agent0 room1
+agentInRoom agent0 room1
+agentInRoom agent0 room1
+agentInRoom agent0 room1
+agentInRoom agent0 room1
+agentInRoom agent0 room1
+agentInRoom agent0 room1
+agentInRoom agent0 room1
+agentInRoom agent0 room1
+agentInRoom agent0 room1

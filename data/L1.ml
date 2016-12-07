@@ -1,0 +1,11 @@
+agentInRegion agent0 room1
+agentInRegion agent0 room1
+agentInRegion agent0 room1
+agentInRegion agent0 room1
+agentInRegion agent0 room1
+agentInRegion agent0 room1
+agentInRegion agent0 room1
+agentInRegion agent0 room1
+agentInRegion agent0 room1
+agentInRegion agent0 room1
+agentInRegion agent0 room1
