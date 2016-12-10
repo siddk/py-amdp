@@ -138,77 +138,20 @@ class IBM2(IBMModel):
                 p = joint / norm
                 self.eta[l][m] = p
 
-    def score(self, src_sentence, trg_sentence):
+    def score(self, english, machine):
         """
         Compute probability of translating source sentence into target sentence, by marginalizing
         over all alignments.
         """
-        l, m = len(trg_sentence), len(src_sentence)
-        src_sentence, trg_sentence = [None] + src_sentence, ['UNUSED'] + trg_sentence
+        l, m = len(machine), len(english)
+        machine, english = [None] + machine, ['UNUSED'] + english
+        eta, prob = self.eta[l][m], 0.0
 
-        eta = self.eta[l][m]
-        if eta > 0.0:
-            num_samples = 1000
-            align_prob = self.sample_alignments(trg_sentence, src_sentence, num_samples)
-        else:
-            eta = 1.0
-            align_prob = self.max_alignment(trg_sentence, src_sentence)
-            
-        return eta * align_prob
+        for i in range(l + 1):
+            for j in range(1, m + 1):
+                prob += self.delta[i][j][l][m] * self.tau[english[j]][machine[i]]
 
-    def sample_alignment(self, l, m):
-        alignment = []
-        #print 'l',l,'m',m
-        for i in xrange(m):
-            rand = random.random()
-            #print 'rand',rand
-            sum_p = 0.0
-            for j in xrange(l):
-                p = self.delta[j][i][l][m]
-                #print 'p',p
-                sum_p += p
-                #print 'sum_p',sum_p
-                if rand < sum_p:
-                    alignment.append(j)
-                    break
-
-        #print alignment
-        assert len(alignment) == m # TODO: Is this assertion necessary??
-        return alignment
-
-    def max_alignment(self, machine, natural):
-        l = len(machine)
-        m = len(natural)
-
-        prod = 1.0
-        for k in xrange(1,m):
-            pword = natural[k]
-
-            best_match = 0.0
-            for j in xrange(l):
-                word = self.tau[pword][machine[j]]
-                if word > best_match:
-                    best_match = word
-            prod *= best_match
-
-        prob = prod / math.pow(l, m)
-        return prob
-
-    def sample_alignments(self, machine, natural, samples):
-        l, m = len(machine), len(natural)
-
-        ret = 0.0
-        for _ in xrange(samples):
-            sampled = self.sample_alignment(l, m)
-            prod = 1.0
-            for k, ak in enumerate(sampled):
-                pword = natural[k]
-                gword = machine[ak]
-
-                prod *= self.tau[pword][gword]
-            ret += prod
-        ret = ret / samples
-        return ret
+        return eta * prob
 
 
 class Model2Counts(Counts):

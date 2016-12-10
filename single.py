@@ -33,15 +33,13 @@ def loo(nl_level, ml_level):
         print 'Training IBM Model 2 on LOO Index:', i
         ibm2 = IBM2(dataset, 15)
 
-        #import ipdb
-        #ipdb.set_trace()
-
         # Score Translations
         best_trans, best_score = None, 0.0
         for t in ml_commands:
             score = ibm2.score(example_en, t)
             if score > best_score:
                 best_trans, best_score = t, score
+        print best_trans, best_score
 
         # Update Counters
         total += 1
