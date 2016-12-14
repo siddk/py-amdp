@@ -28,6 +28,8 @@ def parse(in_file, out_file):
         for line in f:
             toks = word_tokenize(line)
             toks = [x.lower() if not x.isdigit() else numbers[int(x)] for x in toks]
+            if toks[-1] != '.':
+                toks.append('.')
             out.append(" ".join(toks))
 
     with open(out_file, 'w') as f:
