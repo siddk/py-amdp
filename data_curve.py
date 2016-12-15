@@ -1,11 +1,13 @@
 """
 data_curve.py
 
-Given the training configuration (i.e. L0 L1), randomly samples sets of 20s to compute LOO
-accuracy, and generates a plot of accuracy as more data is added.
+Given the training configuration (i.e. L0 L1), partitions data into a random 90 - 10 train/test
+split, then randomly samples sets of 20s to compute accuracy, and generates a plot of accuracy as
+more data is added.
 """
 from models.ibm2 import IBM2
 from preprocessor.reader import *
+from random import shuffle
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
@@ -23,21 +25,20 @@ def loo_data_curve(nl_level, ml_level, step=20):
     """
     nl_tokens, ml_tokens = get_tokens(nl_format % nl_level), get_tokens(ml_format % ml_level)
     ml_commands = get_tokens(commands_format % ml_level)
-    pc = np.array(zip(*(nl_tokens, ml_tokens)))
+    pc = zip(*(nl_tokens, ml_tokens))
+    shuffle(pc)
+    pc_train, pc_test = pc[:int(0.9 * len(pc))], pc[int(0.9 * len(pc)):]
 
-    chunk_sizes, loo_accuracies = [], []
-    for chunk_size in range(step, len(pc), step):
-        idx = np.random.choice(len(pc), chunk_size)
-        parallel_corpus = list(pc[idx])
+    chunk_sizes, accuracies = [], []
+    for chunk_size in range(step, len(pc_train), step):
+        dataset = list(pc_train[:chunk_size])
+        print 'Training IBM Model 2 on Chunk:', chunk_size
+        ibm2 = IBM2(dataset, 15)
+
         correct, total = 0, 0
-        for i in range(len(parallel_corpus) - 1):
-            # Split into LOO dataset and example
-            dataset = parallel_corpus[:i] + parallel_corpus[i + 1:]
-            example_en, example_ml = parallel_corpus[i]
-
-            # Train IBM Model 2 on Dataset
-            print 'Training IBM Model 2 on LOO Index:', i
-            ibm2 = IBM2(dataset, 15)
+        for i in range(len(pc_test) - 1):
+            # Get test command
+            example_en, example_ml = pc_test[i]
 
             # Score Translations
             best_trans, best_score = None, 0.0
@@ -52,18 +53,16 @@ def loo_data_curve(nl_level, ml_level, step=20):
             if best_trans == example_ml:
                 correct += 1
 
-            print 'Chunk %s LOO Index %s Current Accuracy:' % (str(chunk_size), str(i)), \
-                float(correct) / float(total)
-
+        print 'Chunk %s Test Accuracy:' % str(chunk_size), float(correct) / float(total)
         chunk_sizes.append(chunk_size)
-        loo_accuracies.append(float(correct) / float(total))
+        accuracies.append(float(correct) / float(total))
 
     # Print Chunk Sizes, Accuracies
     print 'Chunk Sizes:', chunk_sizes
-    print 'Accuracies:', loo_accuracies
+    print 'Accuracies:', accuracies
 
     # Plot Data Curve
-    plt.plot(chunk_sizes, loo_accuracies)
+    plt.plot(chunk_sizes, accuracies)
     plt.title('%s - %s Data Curve' % (nl_level, ml_level))
     plt.xlabel('Number of Examples')
     plt.ylabel('LOO Accuracy')
