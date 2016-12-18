@@ -15,7 +15,7 @@ import sys
 nl_format, ml_format, commands_format = "data/%s.en", "data/%s.ml", "data/%s.commands"
 
 
-def loo_data_curve(nl_level, ml_level, step=20):
+def loo_data_curve(nl_level, ml_level, save_id, step=20):
     """
     Performs LOO Cross-Validation, generates accuracy for the given Natural Language - Machine
     Language Pair.
@@ -66,7 +66,9 @@ def loo_data_curve(nl_level, ml_level, step=20):
     plt.title('%s - %s Data Curve' % (nl_level, ml_level))
     plt.xlabel('Number of Examples')
     plt.ylabel('LOO Accuracy')
-    plt.show()
+    #plt.show()
+    plt.savefig('./{0}_{1}_{2}.png'.format(nl_level, ml_level, save_id))
+    plt.clf()
 
 
 if __name__ == "__main__":
@@ -75,4 +77,5 @@ if __name__ == "__main__":
     en_lvl, ml_lvl = args[1], args[2]
 
     # Run LOO Cross-Validation => Get Accuracy
-    loo_data_curve(en_lvl, ml_lvl)
+    for i in xrange(int(args[3])):
+        loo_data_curve(en_lvl, ml_lvl, i+1)
