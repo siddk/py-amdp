@@ -65,7 +65,7 @@ def loo_data_curve(nl_level, ml_level, save_id, step=20):
     plt.plot(chunk_sizes, accuracies)
     plt.title('%s - %s Data Curve' % (nl_level, ml_level))
     plt.xlabel('Number of Examples')
-    plt.ylabel('LOO Accuracy')
+    plt.ylabel('Accuracy')
     #plt.show()
     plt.savefig('./{0}_{1}_{2}.png'.format(nl_level, ml_level, save_id))
     plt.clf()
@@ -78,4 +78,4 @@ if __name__ == "__main__":
 
     # Run LOO Cross-Validation => Get Accuracy
     for i in xrange(int(args[3])):
-        loo_data_curve(en_lvl, ml_lvl, i+1)
+        loo_data_curve(en_lvl, ml_lvl, i + 1)
