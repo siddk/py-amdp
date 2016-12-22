@@ -92,4 +92,4 @@ ENV/
 .idea/
 
 # PNG
-*.png
+.DS_Store
