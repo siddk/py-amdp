@@ -13,10 +13,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sys
 
-nl_format, ml_format, commands_format = "clean_data/%s.en", "clean_data/%s.ml", "clean_data/%s.commands"
+nl_format, ml_format, commands_format = "clean_data/test/%s.en", "clean_data/test/%s.ml", "clean_data/test/%s.commands"
 
 
-def loo_data_curve(nl_level, ml_level, save_id, step=50, save_fig=True):
+def loo_data_curve(nl_level, ml_level, save_id, step=20, save_fig=True):
     """
     Performs LOO Cross-Validation, generates accuracy for the given Natural Language - Machine
     Language Pair.
@@ -70,6 +70,7 @@ def loo_data_curve(nl_level, ml_level, save_id, step=50, save_fig=True):
         plt.title('%s - %s Data Curve' % (nl_level, ml_level))
         plt.xlabel('Number of Examples')
         plt.ylabel('Accuracy')
+        plt.xlim(0, len(pc_train) + step)
         #plt.show()
         plt.savefig('./{0}_{1}_{2}.png'.format(nl_level, ml_level, save_id))
         plt.clf()
