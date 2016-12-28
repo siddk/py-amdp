@@ -97,7 +97,7 @@ def data_curve(save_id, step=50, save_fig=True):
         plt.xlabel('Number of Examples')
         plt.ylabel('Reward Function Accuracy')
         #plt.show()
-        plt.savefig('./two_stage_data_{2}.png'.format(save_id))
+        plt.savefig('./two_stage_data_{0}.png'.format(save_id))
         plt.clf()
 
         # Plot Level Selection Accuracy Curve
@@ -105,7 +105,7 @@ def data_curve(save_id, step=50, save_fig=True):
         plt.title('Two-Stage Model AMDP Level Selection Data Curve')
         plt.xlabel('Number of Examples')
         plt.ylabel('Level Selection Accuracy')
-        plt.savefig('./two_stage_level_{2}.png'.format(save_id))
+        plt.savefig('./two_stage_level_{0}.png'.format(save_id))
 
     return chunk_sizes, accuracies, level_accuracies
 

@@ -33,6 +33,7 @@ class NNClassifier():
 
         # Setup Placeholders
         self.X = tf.placeholder(tf.int32, shape=[None, self.max_len])
+        self.Y = tf.placeholder(tf.int32, shape=[None])
 
     def build_vocabulary(self):
         """
