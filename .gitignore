@@ -93,3 +93,6 @@ ENV/
 
 # PNG
 .DS_Store
+
+# Log
+logs/
