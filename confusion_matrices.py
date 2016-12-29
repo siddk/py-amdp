@@ -62,8 +62,6 @@ def get_dataframe(level):
             correct += 1
 
         # Update Confusion Matrix
-        print example_ml
-        print best_trans
         confusion_matrix[" ".join(example_ml)][" ".join(best_trans)] += 1
 
     # Return Matrix, Accuracy
@@ -92,16 +90,15 @@ if __name__ == "__main__":
             d, a = get_dataframe(lvl)
             df.append(d)
             acc.append(a)
-            print 'Confusion Matrix:', d
-            print 'Accuracy:', a
+            print 'Trial %s Accuracy:' % str(trial + 1), a
 
         # Pickle Entire Lists
         with open('%s_confusion.pik', 'w') as f:
             pickle.dump((df, acc), f)
 
-        # Write Average Confusion Matrix, Average Accuracy to File
-        avg_df = sum(df) / float(len(df))
-        avg_df.to_csv('%s_confusion.csv', encoding='utf-8')
+        # Write Confusion Matrix, Average Accuracy to File
+        avg_df = sum(df)
+        avg_df.to_csv('%s_confusion.csv' % lvl, encoding='utf-8')
 
         print 'Average Accuracy on Level %s over %s Runs:' % (lvl, num_trials), sum(acc) / len(acc)
 
