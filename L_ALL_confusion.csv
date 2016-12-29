@@ -1,0 +1,13 @@
+,aReg  r0,aReg  r1,aReg  r1 bReg  r2,aReg  r2 bReg  r1,aRoom  r0,aRoom  r1,aRoom  r1 bRoom  r2,aRoom  r2 bRoom  r1,bReg  r1,bReg  r2,bRoom  r1,bRoom  r2
+aReg  r0,162,15,11,2,3,2,1,0,7,79,0,0
+aReg  r1,22,49,36,16,2,0,0,0,37,50,0,4
+aReg  r1 bReg  r2,3,30,119,7,0,0,0,0,26,32,0,5
+aReg  r2 bReg  r1,5,3,35,32,0,0,0,0,1,41,0,6
+aRoom  r0,0,0,0,1,79,8,1,1,0,0,10,14
+aRoom  r1,0,0,0,0,33,24,5,3,0,1,12,21
+aRoom  r1 bRoom  r2,0,0,0,0,0,2,41,23,0,0,9,26
+aRoom  r2 bRoom  r1,0,0,0,0,2,0,30,16,0,0,7,29
+bReg  r1,0,0,4,0,0,0,0,1,2,0,0,0
+bReg  r2,0,0,3,2,0,0,0,0,0,18,0,0
+bRoom  r1,0,0,0,0,1,1,1,1,0,0,4,3
+bRoom  r2,0,0,0,0,5,4,2,2,0,0,0,5

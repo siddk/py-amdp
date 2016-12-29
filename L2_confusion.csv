@@ -1,0 +1,7 @@
+,aReg  r0,aReg  r1,aReg  r1 bReg  r2,aReg  r2 bReg  r1,bReg  r1,bReg  r2
+aReg  r0,123,0,7,2,0,37
+aReg  r1,7,51,18,8,17,24
+aReg  r1 bReg  r2,0,6,99,3,7,4
+aReg  r2 bReg  r1,0,1,2,18,2,22
+bReg  r1,0,0,1,1,5,1
+bReg  r2,0,0,2,2,0,30
