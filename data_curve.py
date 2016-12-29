@@ -99,4 +99,5 @@ if __name__ == "__main__":
     plt.title('%s - %s Test Accuracy vs. Number Training Examples' % (en_lvl, ml_lvl))
     plt.xlabel('Number of Training Examples')
     plt.ylabel('Test Accuracy')
+    plt.ylim([0, 1])
     plt.savefig('./{0}_{1}_error_bar.png'.format(en_lvl, ml_lvl))

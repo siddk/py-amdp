@@ -13,11 +13,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sys
 
-nl_format, ml_format, commands_format = "clean_data/%s.en", "clean_data/%s.ml", "clean_data/%s.commands"
+nl_format, ml_format, commands_format = "clean_data/test/%s.en", "clean_data/test/%s.ml", "clean_data/test/%s.commands"
 levels = ["L0", "L1", "L2"]
 
 
-def data_curve(save_id, step=50, save_fig=True):
+def data_curve(save_id, step=20, save_fig=True):
     """
     Plots accuracy over number of examples, across all-levels.
     """
