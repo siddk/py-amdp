@@ -61,7 +61,7 @@ def loo_data_curve(nl_level, ml_level, save_id, model='ibm2', step=20, save_fig=
                     if score > best_score:
                         best_trans, best_score = t, score
 
-            elif model == 'rnn' or model == 'nn':
+            elif model == 'neural':
                 best_trans, best_score = m.score(example_en)
 
             # Print Statistics
@@ -86,7 +86,6 @@ def loo_data_curve(nl_level, ml_level, save_id, model='ibm2', step=20, save_fig=
         plt.title('%s - %s Data Curve' % (nl_level, ml_level))
         plt.xlabel('Number of Examples')
         plt.ylabel('Accuracy')
-        plt.xlim(0, len(pc_train) + step)
         #plt.show()
         plt.savefig('./{0}_{1}_{2}.png'.format(nl_level, ml_level, save_id))
         plt.clf()
@@ -116,5 +115,6 @@ if __name__ == "__main__":
     plt.title('%s - %s Test Accuracy vs. Number Training Examples' % (en_lvl, ml_lvl))
     plt.xlabel('Number of Training Examples')
     plt.ylabel('Test Accuracy')
-    plt.ylim([0, 1])
+    #plt.ylim([0, 1])
+    plt.xlim(0, max([x[0] for x in tuples]) + 20)
     plt.savefig('./{0}_{1}_error_bar.png'.format(en_lvl, ml_lvl))
