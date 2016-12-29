@@ -14,6 +14,22 @@ import sys
 
 nl_format, ml_format, commands_format = "clean_data/test/%s.en", "clean_data/test/%s.ml", "clean_data/test/%s.commands"
 
+prefix = {"agentInRegion": "aReg",
+          "agentInRoom": "aRoom",
+          "blockInRegion": "bReg",
+          "blockInRoom": "bRoom",
+          "agent0": "",
+          "block0": "",
+          "room0": "r0",
+          "room1": "r1",
+          "room2": "r2",
+          "door0": "d0",
+          "door1": "d1"}
+
+
+def convert(command):
+    return " ".join([prefix[x] for x in command])
+
 
 def get_dataframe(level):
     """
@@ -35,9 +51,9 @@ def get_dataframe(level):
     # Initialize Confusion Matrix
     confusion_matrix = {}
     for i in ml_commands:
-        confusion_matrix[" ".join(i)] = {}
+        confusion_matrix[convert(i)] = {}
         for j in ml_commands:
-            confusion_matrix[" ".join(i)][" ".join(j)] = 0
+            confusion_matrix[convert(i)][convert(j)] = 0
 
     # Train IBM Model
     print 'Training IBM Model!'
@@ -62,7 +78,7 @@ def get_dataframe(level):
             correct += 1
 
         # Update Confusion Matrix
-        confusion_matrix[" ".join(example_ml)][" ".join(best_trans)] += 1
+        confusion_matrix[convert(example_ml)][convert(best_trans)] += 1
 
     # Return Matrix, Accuracy
     return pandas.DataFrame(confusion_matrix), float(correct) / float(total)
@@ -93,7 +109,7 @@ if __name__ == "__main__":
             print 'Trial %s Accuracy:' % str(trial + 1), a
 
         # Pickle Entire Lists
-        with open('%s_confusion.pik', 'w') as f:
+        with open('%s_confusion.pik' % lvl, 'w') as f:
             pickle.dump((df, acc), f)
 
         # Write Confusion Matrix, Average Accuracy to File
