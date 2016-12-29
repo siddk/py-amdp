@@ -136,6 +136,7 @@ if __name__ == "__main__":
         plt.title('Two-Stage Model Test Accuracy vs. Number Training Examples')
         plt.xlabel('Number of Training Examples')
         plt.ylabel('Test Accuracy')
+        plt.ylim([0, 1])
         plt.savefig('./two_stage_data_error_bar.png')
         plt.clf()
 
@@ -148,5 +149,6 @@ if __name__ == "__main__":
         plt.title('Two-Stage Model Level Selection Accuracy vs. Number Training Examples')
         plt.xlabel('Number of Training Examples')
         plt.ylabel('Level Selection Accuracy')
+        plt.ylim([0, 1])
         plt.savefig('./two_stage_data_error_bar.png')
         plt.clf()
