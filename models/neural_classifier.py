@@ -19,7 +19,7 @@ UNK, UNK_ID = "<<UNK>>", 1
 
 
 class NNClassifier():
-    def __init__(self, parallel_corpus, commands, embedding_size=20, lstm_size=100, hidden_size=50,
+    def __init__(self, parallel_corpus, commands, embedding_size=20, lstm_size=60, hidden_size=50,
                  epochs=10, batch_size=16):
         """
         Instantiates and Trains Model using the given parallel corpus.
@@ -93,7 +93,7 @@ class NNClassifier():
         hidden = tflearn.fully_connected(lstm, self.hidden_sz, activation='relu')
         hidden = tflearn.dropout(hidden, keep_prob[0])
         output = tflearn.fully_connected(hidden, len(self.commands), activation='softmax')
-        net = tflearn.regression(output, placeholder=self.Y, learning_rate=0.25)
+        net = tflearn.regression(output, placeholder=self.Y, learning_rate=0.025)
         return tflearn.DNN(net, tensorboard_dir='logs/')
 
     def score(self, nl_command):
