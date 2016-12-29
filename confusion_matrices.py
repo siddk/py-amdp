@@ -75,12 +75,16 @@ if __name__ == "__main__":
     args = sys.argv
     run_type, num_trials = args[1], args[2]
 
-    if run_type == 'all':
+    if run_type == 'dual':
         pass
 
-    elif run_type == 'single':
-        # Get Level to Train On
-        lvl = args[3]
+    else:
+        if run_type == 'all':
+            lvl = 'L_ALL'
+
+        if run_type == 'single':
+            # Get Level to Train On
+            lvl = args[3]
 
         # Generate DataFrames for Each Trial
         df, acc = [], []
@@ -101,5 +105,3 @@ if __name__ == "__main__":
 
         print 'Average Accuracy on Level %s over %s Runs:' % (lvl, num_trials), sum(acc) / len(acc)
 
-    elif run_type == 'dual':
-        pass
