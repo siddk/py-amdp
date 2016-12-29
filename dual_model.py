@@ -131,7 +131,7 @@ if __name__ == "__main__":
         tuples = sorted(list(error_bar_data.iteritems()), key=lambda x: x[0])
         plt.plot([x[0] for x in tuples], [np.mean(x[1]) for x in tuples], 'g--')
         plt.errorbar([x[0] for x in tuples], [np.mean(x[1]) for x in tuples],
-                     yerr=1.96 * np.array([np.std(x[1]) for x in tuples]) * (1 / np.sqrt(int(args[3]))),
+                     yerr=1.96 * np.array([np.std(x[1]) for x in tuples]) * (1 / np.sqrt(int(args[2]))),
                      color='g')
         plt.title('Two-Stage Model Test Accuracy vs. Number Training Examples')
         plt.xlabel('Number of Training Examples')
@@ -144,7 +144,7 @@ if __name__ == "__main__":
         tuples = sorted(list(error_bar_level.iteritems()), key=lambda x: x[0])
         plt.plot([x[0] for x in tuples], [np.mean(x[1]) for x in tuples], 'g--')
         plt.errorbar([x[0] for x in tuples], [np.mean(x[1]) for x in tuples],
-                     yerr=1.96 * np.array([np.std(x[1]) for x in tuples]) * (1 / np.sqrt(int(args[3]))),
+                     yerr=1.96 * np.array([np.std(x[1]) for x in tuples]) * (1 / np.sqrt(int(args[2]))),
                      color='g')
         plt.title('Two-Stage Model Level Selection Accuracy vs. Number Training Examples')
         plt.xlabel('Number of Training Examples')

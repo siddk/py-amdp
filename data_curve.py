@@ -7,7 +7,8 @@ more data is added.
 """
 from collections import defaultdict
 from models.ibm2 import IBM2
-from models.neural_classifier import NNClassifier
+from models.nn_classifier import NNClassifier
+from models.rnn_classifier import RNNClassifier
 from preprocessor.reader import *
 from random import shuffle
 import matplotlib.pyplot as plt
@@ -42,7 +43,9 @@ def loo_data_curve(nl_level, ml_level, save_id, model='ibm2', step=20, save_fig=
 
         if model == 'ibm2':
             m = IBM2(dataset, 15)
-        elif model == 'neural':
+        elif model == 'rnn':
+            m = RNNClassifier(dataset, ml_commands)
+        elif model == 'nn':
             m = NNClassifier(dataset, ml_commands)
 
         correct, total = 0, 0
@@ -58,7 +61,7 @@ def loo_data_curve(nl_level, ml_level, save_id, model='ibm2', step=20, save_fig=
                     if score > best_score:
                         best_trans, best_score = t, score
 
-            elif model == 'neural':
+            elif model == 'rnn' or model == 'nn':
                 best_trans, best_score = m.score(example_en)
 
             # Print Statistics
