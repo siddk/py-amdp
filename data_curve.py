@@ -16,7 +16,10 @@ import numpy as np
 import tensorflow as tf
 import sys
 
-nl_format, ml_format, commands_format = "clean_data/test/%s.en", "clean_data/test/%s.ml", "clean_data/test/%s.commands"
+CONSTRAIN = False
+
+nl_format, ml_format = "clean_data/test/%s.en", "clean_data/test/%s.ml"
+commands_format = "clean_data/test/%s.commands" if CONSTRAIN else "clean_data/%s.commands"
 
 
 def loo_data_curve(nl_level, ml_level, save_id, model='ibm2', step=20, save_fig=True):
@@ -115,6 +118,6 @@ if __name__ == "__main__":
     plt.title('%s - %s Test Accuracy vs. Number Training Examples' % (en_lvl, ml_lvl))
     plt.xlabel('Number of Training Examples')
     plt.ylabel('Test Accuracy')
-    #plt.ylim([0, 1])
+    plt.ylim([0, 1])
     plt.xlim(0, max([x[0] for x in tuples]) + 20)
     plt.savefig('./{0}_{1}_error_bar.png'.format(en_lvl, ml_lvl))
