@@ -12,6 +12,7 @@ from random import shuffle
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
+import pandas
 
 nl_format, ml_format, commands_format = "clean_data/test/%s.en", "clean_data/test/%s.ml", "clean_data/test/%s.commands"
 levels = ["L0", "L1", "L2"]
@@ -32,7 +33,7 @@ def data_curve(save_id, step=20, save_fig=True):
         pc_train, pc_test = pc[:int(0.9 * len(pc))], pc[int(0.9 * len(pc)):]
         data[lvl] = (pc_train, pc_test, ml_commands)
 
-    chunk_sizes, accuracies, level_accuracies = [], [], []
+    chunk_sizes, accuracies, level_accuracies, level_confusion = [], [], [], defaultdict(lambda: defaultdict(int))
     for chunk_size in range(step, min(map(lambda z: len(z[0]), data.values())), step):
         l0_dataset = list(data["L0"][0][:chunk_size])
         l1_dataset = list(data["L1"][0][:chunk_size])
@@ -62,6 +63,7 @@ def data_curve(save_id, step=20, save_fig=True):
                     if lvl_signal > level_max:
                         level, level_max = k, lvl_signal
 
+                level_confusion[level][lvl] += 1
                 if level == lvl:
                     ml_commands = data[lvl][2]
                     lvl_correct += 1
@@ -107,7 +109,7 @@ def data_curve(save_id, step=20, save_fig=True):
         plt.ylabel('Level Selection Accuracy')
         plt.savefig('./two_stage_level_{0}.png'.format(save_id))
 
-    return chunk_sizes, accuracies, level_accuracies
+    return chunk_sizes, accuracies, level_accuracies, pandas.DataFrame(level_confusion)
 
 
 if __name__ == "__main__":
@@ -120,9 +122,10 @@ if __name__ == "__main__":
 
     else:
         # Run LOO Cross-Validation => Get Accuracy
-        error_bar_data, error_bar_level = defaultdict(list), defaultdict(list)
+        error_bar_data, error_bar_level, data_frames = defaultdict(list), defaultdict(list), []
         for i in xrange(int(num_trials)):
-            x, y, z = data_curve(i + 1)
+            x, y, z, df = data_curve(i + 1)
+            data_frames.append(df)
             for j in range(len(x)):
                 error_bar_data[x[j]] += [y[j]]
                 error_bar_level[x[j]] += [z[j]]
@@ -152,3 +155,9 @@ if __name__ == "__main__":
         plt.ylim([0, 1])
         plt.savefig('./two_stage_level_error_bar.png')
         plt.clf()
+
+        # Create and Save Level Confusion Matrix
+        avg_df = sum(data_frames)
+        for i in xrange(len(avg_df)):
+            avg_df.loc[i] /= 0.01 * sum(avg_df.loc[0])
+        avg_df.to_csv('dual_confusion.csv', encoding='utf-8')
