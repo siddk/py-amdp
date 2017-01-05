@@ -114,6 +114,8 @@ if __name__ == "__main__":
 
         # Write Confusion Matrix, Average Accuracy to File
         avg_df = sum(df)
+        for i in avg_df.index:
+            avg_df.loc[i] /= 0.01 * sum(avg_df.loc[i])
         avg_df.to_csv('%s_confusion.csv' % lvl, encoding='utf-8')
 
         print 'Average Accuracy on Level %s over %s Runs:' % (lvl, num_trials), sum(acc) / len(acc)
