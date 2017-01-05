@@ -33,7 +33,12 @@ def data_curve(save_id, step=20, save_fig=True):
         pc_train, pc_test = pc[:int(0.9 * len(pc))], pc[int(0.9 * len(pc)):]
         data[lvl] = (pc_train, pc_test, ml_commands)
 
-    chunk_sizes, accuracies, level_accuracies, level_confusion = [], [], [], defaultdict(lambda: defaultdict(int))
+    chunk_sizes, accuracies, level_accuracies, level_confusion = [], [], [], {}
+    for lvl in levels:
+        level_confusion[lvl] = {}
+        for lvl2 in levels:
+            level_confusion[lvl][lvl2] = 0
+            
     for chunk_size in range(step, min(map(lambda z: len(z[0]), data.values())), step):
         l0_dataset = list(data["L0"][0][:chunk_size])
         l1_dataset = list(data["L1"][0][:chunk_size])
@@ -60,7 +65,7 @@ def data_curve(save_id, step=20, save_fig=True):
                     for c in commands:
                         curr_sum += joint_ibm2.score(example_en, c)
                     lvl_signal = curr_sum / len(commands)
-                    if lvl_signal > level_max:
+                    if lvl_signal >= level_max:
                         level, level_max = k, lvl_signal
 
                 level_confusion[level][lvl] += 1
@@ -109,6 +114,7 @@ def data_curve(save_id, step=20, save_fig=True):
         plt.ylabel('Level Selection Accuracy')
         plt.savefig('./two_stage_level_{0}.png'.format(save_id))
 
+    print 'lc', level_confusion
     return chunk_sizes, accuracies, level_accuracies, pandas.DataFrame(level_confusion)
 
 
@@ -157,7 +163,10 @@ if __name__ == "__main__":
         plt.clf()
 
         # Create and Save Level Confusion Matrix
+        for x in data_frames:
+            print x
         avg_df = sum(data_frames)
-        for i in xrange(len(avg_df)):
-            avg_df.loc[i] /= 0.01 * sum(avg_df.loc[0])
+        print avg_df
+        for lvl in avg_df.index:
+            avg_df.loc[lvl] /= 0.01 * sum(avg_df.loc[lvl])
         avg_df.to_csv('dual_confusion.csv', encoding='utf-8')
