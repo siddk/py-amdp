@@ -13,11 +13,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sys
 
-nl_format, ml_format, commands_format = "clean_data/test/%s.en", "clean_data/test/%s.ml", "clean_data/test/%s.commands"
+nl_format, ml_format, commands_format = "clean_data/test/%s.en", "clean_data/test/%s.ml", "clean_data/%s.commands"
 levels = ["L0", "L1", "L2"]
 
 
-def data_curve(save_id, step=20, save_fig=True):
+def data_curve(save_id, step=20, save_fig=False):
     """
     Plots accuracy over number of examples, across all-levels.
     """
@@ -137,7 +137,7 @@ if __name__ == "__main__":
         plt.xlabel('Number of Training Examples')
         plt.ylabel('Test Accuracy')
         plt.ylim([0, 1])
-        plt.savefig('./two_stage_data_error_bar.png')
+        plt.savefig('./two_stage_data_error_bar_unconstrained.png')
         plt.clf()
 
         # Create and Save Level Error Bar
@@ -150,5 +150,5 @@ if __name__ == "__main__":
         plt.xlabel('Number of Training Examples')
         plt.ylabel('Level Selection Accuracy')
         plt.ylim([0, 1])
-        plt.savefig('./two_stage_level_error_bar.png')
+        plt.savefig('./two_stage_level_error_bar_unconstrained.png')
         plt.clf()
