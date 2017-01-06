@@ -13,7 +13,6 @@ Architecture:
 """
 import numpy as np
 import tensorflow as tf
-import tflearn
 
 PAD, PAD_ID = "<<PAD>>", 0
 UNK, UNK_ID = "<<UNK>>", 1

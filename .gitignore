@@ -98,5 +98,4 @@ ENV/
 logs/
 
 # Cache
-cache_constrained/
-cache_unconstrained
+old_data/

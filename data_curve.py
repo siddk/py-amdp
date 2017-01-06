@@ -64,7 +64,7 @@ def loo_data_curve(nl_level, ml_level, save_id, model='ibm2', step=20, save_fig=
                     if score > best_score:
                         best_trans, best_score = t, score
 
-            elif model == 'neural':
+            elif model in ['rnn', 'nn']:
                 best_trans, best_score = m.score(example_en)
 
             # Print Statistics
