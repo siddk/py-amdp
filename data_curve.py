@@ -37,19 +37,20 @@ def loo_data_curve(nl_level, ml_level, save_id, model='ibm2', step=20, save_fig=
     shuffle(pc)
     shuffle(pc)
     pc_train, pc_test = pc[:int(0.9 * len(pc))], pc[int(0.9 * len(pc)):]
+    
+    if model == 'rnn':
+        m = RNNClassifier(list(pc_train), ml_commands)
+    elif model == 'nn':
+        m = NNClassifier(list(pc_train), ml_commands)
 
     chunk_sizes, accuracies = [], []
     for chunk_size in range(step, len(pc_train), step):
-        tf.reset_default_graph()
         dataset = list(pc_train[:chunk_size])
         print 'Training Model on Chunk:', chunk_size
-
         if model == 'ibm2':
             m = IBM2(dataset, 15)
-        elif model == 'rnn':
-            m = RNNClassifier(dataset, ml_commands)
-        elif model == 'nn':
-            m = NNClassifier(dataset, ml_commands)
+        elif model in ['rnn', 'nn']:
+            m.fit(chunk_size)
 
         correct, total = 0, 0
         for i in range(len(pc_test) - 1):
@@ -90,7 +91,7 @@ def loo_data_curve(nl_level, ml_level, save_id, model='ibm2', step=20, save_fig=
         plt.xlabel('Number of Examples')
         plt.ylabel('Accuracy')
         #plt.show()
-        plt.savefig('./{0}_{1}_{2}.png'.format(nl_level, ml_level, save_id))
+        plt.savefig('./{0}_{1}_{2}_{3}.png'.format(model, nl_level, ml_level, save_id))
         plt.clf()
 
     return chunk_sizes, accuracies
@@ -120,4 +121,4 @@ if __name__ == "__main__":
     plt.ylabel('Test Accuracy')
     plt.ylim([0, 1])
     plt.xlim(0, max([x[0] for x in tuples]) + 20)
-    plt.savefig('./{0}_{1}_error_bar.png'.format(en_lvl, ml_lvl))
+    plt.savefig('./{0}_{1}_{2}_error_bar.png'.format(model, en_lvl, ml_lvl))

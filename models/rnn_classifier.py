@@ -33,7 +33,6 @@ class RNNClassifier():
         self.pc, self.epochs, self.bsz = parallel_corpus, epochs, batch_size
         self.embedding_sz, self.lstm_sz, self.hidden_sz = embedding_size, lstm_size, hidden_size
         self.init = tf.truncated_normal_initializer(stddev=0.5)
-        self.session = tf.Session()
 
         # Build Vocabulary
         self.word2id, self.id2word = self.build_vocabulary()
@@ -57,9 +56,6 @@ class RNNClassifier():
                                                                                   self.Y))
         # Build Training Operation
         self.train_op = tf.train.AdamOptimizer().minimize(self.loss)
-
-        # Train
-        self.fit()
 
     def build_vocabulary(self):
         """
@@ -119,17 +115,20 @@ class RNNClassifier():
         output = tf.matmul(hidden, O_W) + O_B
         return output
 
-    def fit(self):
+    def fit(self, chunk_size):
         """
         Train the model, with the specified batch size and number of epochs.
         """
-        self.session.run(tf.initialize_all_variables())
+        # Initialize all variables
+        tf.set_random_seed(42)
+        self.session = tf.Session()
+        self.session.run(tf.global_variables_initializer())
 
         # Run through epochs
         for e in range(self.epochs):
             curr_loss, batches = 0.0, 0.0
-            for start, end in zip(range(0, len(self.train_x) - self.bsz, self.bsz),
-                                  range(self.bsz, len(self.train_x), self.bsz)):
+            for start, end in zip(range(0, len(self.train_x[:chunk_size]) - self.bsz, self.bsz),
+                                  range(self.bsz, len(self.train_x[:chunk_size]), self.bsz)):
                 loss, _ = self.session.run([self.loss, self.train_op],
                                            feed_dict={self.X: self.train_x[start:end],
                                                       self.X_len: self.lengths[start:end],
