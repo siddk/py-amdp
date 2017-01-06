@@ -5,7 +5,10 @@ Generates confusion matrices for the specified configuration, to aid in error an
 
 Usage: python confusion_matrices [all|single|dual] [Num-Trials] [Level]
 """
+import tensorflow as tf
 from models.ibm2 import IBM2
+from models.nn_classifier import NNClassifier
+from models.rnn_classifier import RNNClassifier
 from preprocessor.reader import *
 from random import shuffle
 import pandas
@@ -31,7 +34,7 @@ def convert(command):
     return " ".join([prefix[x] for x in command])
 
 
-def get_dataframe(level):
+def get_dataframe(level, model='ibm2'):
     """
     Given the specific level to train on, take an arbitrary 90-10 split of the level data, then
     build the confusion matrix (represented as a dataframe).
@@ -39,6 +42,7 @@ def get_dataframe(level):
     :param level: Level to train on.
     :return DataFrame representing the Confusion Matrix.
     """
+    tf.reset_default_graph()
     # Load Data
     nl_tokens, ml_tokens = get_tokens(nl_format % level), get_tokens(ml_format % level)
     ml_commands = get_tokens(commands_format % level)
@@ -55,9 +59,16 @@ def get_dataframe(level):
         for j in ml_commands:
             confusion_matrix[convert(i)][convert(j)] = 0
 
-    # Train IBM Model
-    print 'Training IBM Model!'
-    ibm2 = IBM2(pc_train, 15)
+    # Train Model
+    if model == 'rnn':
+        print 'Training RNN Classifier'
+        m = RNNClassifier(list(pc_train), ml_commands)
+    elif model == 'nn':
+        print 'Training NN Classifier'
+        m = NNClassifier(list(pc_train), ml_commands)
+    else:
+        print 'Training IBM Model!'
+        m = IBM2(pc_train, 15)
 
     # Evaluate on Test Data
     correct, total = 0, 0
@@ -66,11 +77,15 @@ def get_dataframe(level):
         example_en, example_ml = pc_test[i]
 
         # Score Translations
-        best_trans, best_score = None, -1
-        for t in ml_commands:
-            score = ibm2.score(example_en, t)
-            if score > best_score:
-                best_trans, best_score = t, score
+        if model == 'ibm2':
+            best_trans, best_score = None, 0.0
+            for t in ml_commands:
+                score = m.score(example_en, t)
+                if score > best_score:
+                    best_trans, best_score = t, score
+
+        elif model in ['rnn', 'nn']:
+            best_trans, best_score = m.score(example_en)
 
         # Update Counters
         total += 1
@@ -87,7 +102,7 @@ def get_dataframe(level):
 if __name__ == "__main__":
     # Read Command Line Arguments
     args = sys.argv
-    run_type, num_trials = args[1], args[2]
+    run_type, model, num_trials = args[1], args[2], args[3]
 
     if run_type == 'dual':
         pass
@@ -98,12 +113,12 @@ if __name__ == "__main__":
 
         if run_type == 'single':
             # Get Level to Train On
-            lvl = args[3]
+            lvl = args[4]
 
         # Generate DataFrames for Each Trial
         df, acc = [], []
         for trial in range(int(num_trials)):
-            d, a = get_dataframe(lvl)
+            d, a = get_dataframe(lvl, model)
             df.append(d)
             acc.append(a)
             print 'Trial %s Accuracy:' % str(trial + 1), a
