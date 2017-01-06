@@ -55,6 +55,10 @@ class NNClassifier():
         # Build Training Operation
         self.train_op = tf.train.AdamOptimizer().minimize(self.loss)
 
+        # Initialize all variables
+        self.session = tf.Session()
+        self.session.run(tf.global_variables_initializer())
+
     def build_vocabulary(self):
         """
         Builds the vocabulary from the parallel corpus, adding the UNK ID.
@@ -121,11 +125,6 @@ class NNClassifier():
         """
         Train the model, with the specified batch size and number of epochs.
         """
-        # Initialize all variables
-        tf.set_random_seed(42)
-        self.session = tf.Session()
-        self.session.run(tf.global_variables_initializer())
-
         # Run through epochs
         for e in range(self.epochs):
             curr_loss, batches = 0.0, 0.0

@@ -33,6 +33,7 @@ class RNNClassifier():
         self.pc, self.epochs, self.bsz = parallel_corpus, epochs, batch_size
         self.embedding_sz, self.lstm_sz, self.hidden_sz = embedding_size, lstm_size, hidden_size
         self.init = tf.truncated_normal_initializer(stddev=0.5)
+        self.session = tf.Session()
 
         # Build Vocabulary
         self.word2id, self.id2word = self.build_vocabulary()
@@ -56,6 +57,9 @@ class RNNClassifier():
                                                                                   self.Y))
         # Build Training Operation
         self.train_op = tf.train.AdamOptimizer().minimize(self.loss)
+
+        # Initialize all variables
+        self.session.run(tf.global_variables_initializer())
 
     def build_vocabulary(self):
         """
@@ -95,9 +99,9 @@ class RNNClassifier():
         embedding = tf.nn.dropout(embedding, self.keep_prob)
 
         # LSTM
-        cell = tf.nn.rnn_cell.BasicLSTMCell(self.lstm_sz, state_is_tuple=True)
+        cell = tf.nn.rnn_cell.GRUCell(self.lstm_sz)
         _, state = tf.nn.dynamic_rnn(cell, embedding, sequence_length=self.X_len, dtype=tf.float32)
-        h_state = state[-1]                                         # Shape [None, lstm_sz]
+        h_state = state                                             # Shape [None, lstm_sz]
 
         # ReLU Layer
         H_W = tf.get_variable("Hidden_W", shape=[self.lstm_sz, self.hidden_sz], dtype=tf.float32,
@@ -119,11 +123,6 @@ class RNNClassifier():
         """
         Train the model, with the specified batch size and number of epochs.
         """
-        # Initialize all variables
-        tf.set_random_seed(42)
-        self.session = tf.Session()
-        self.session.run(tf.global_variables_initializer())
-
         # Run through epochs
         for e in range(self.epochs):
             curr_loss, batches = 0.0, 0.0

@@ -99,6 +99,7 @@ logs/
 
 # Cache
 old_data/
+nn_data/
 
 # VSCode
 .vscode

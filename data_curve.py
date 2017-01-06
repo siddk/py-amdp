@@ -30,6 +30,7 @@ def loo_data_curve(nl_level, ml_level, save_id, model='ibm2', step=20, save_fig=
     :param nl_level: Natural Language Level => One of 'L0', 'L1', or 'L2'
     :param ml_level: Machine Language Level => One of 'L0', 'L1', or 'L2'
     """
+    tf.reset_default_graph()
     nl_tokens, ml_tokens = get_tokens(nl_format % nl_level), get_tokens(ml_format % ml_level)
     ml_commands = get_tokens(commands_format % ml_level)
     pc = zip(*(nl_tokens, ml_tokens))
@@ -121,4 +122,4 @@ if __name__ == "__main__":
     plt.ylabel('Test Accuracy')
     plt.ylim([0, 1])
     plt.xlim(0, max([x[0] for x in tuples]) + 20)
-    plt.savefig('./{0}_{1}_{2}_error_bar.png'.format(model, en_lvl, ml_lvl))
+    plt.savefig('./{0}_{1}_{2}_{3}_error_bar.png'.format(model, en_lvl, ml_lvl, "constrained" if CONSTRAIN else "unconstrained"))
