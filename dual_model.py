@@ -14,7 +14,10 @@ import numpy as np
 import sys
 import pandas
 
-nl_format, ml_format, commands_format = "clean_data/test/%s.en", "clean_data/test/%s.ml", "clean_data/%s.commands"
+CONSTRAIN = False
+
+nl_format, ml_format = "clean_data/test/%s.en", "clean_data/test/%s.ml"
+commands_format = "clean_data/test/%s.commands" if CONSTRAIN else "clean_data/%s.commands"
 levels = ["L0", "L1", "L2"]
 
 
@@ -100,19 +103,19 @@ def data_curve(save_id, step=20, save_fig=False):
     if save_fig:
         # Plot Data Curve
         plt.plot(chunk_sizes, accuracies)
-        plt.title('Two-Stage Model Data Curve')
+        plt.title('Dual Model Data Curve')
         plt.xlabel('Number of Examples')
         plt.ylabel('Reward Function Accuracy')
         #plt.show()
-        plt.savefig('./two_stage_data_{0}.png'.format(save_id))
+        plt.savefig('./ibm_dual_data_{0}.png'.format(save_id))
         plt.clf()
 
         # Plot Level Selection Accuracy Curve
         plt.plot(chunk_sizes, level_accuracies)
-        plt.title('Two-Stage Model AMDP Level Selection Data Curve')
+        plt.title('Dual Model AMDP Level Selection Data Curve')
         plt.xlabel('Number of Examples')
         plt.ylabel('Level Selection Accuracy')
-        plt.savefig('./two_stage_level_{0}.png'.format(save_id))
+        plt.savefig('./ibm_dual_level_{0}.png'.format(save_id))
 
     print 'lc', level_confusion
     return chunk_sizes, accuracies, level_accuracies, pandas.DataFrame(level_confusion)
@@ -142,11 +145,11 @@ if __name__ == "__main__":
         plt.errorbar([x[0] for x in tuples], [np.mean(x[1]) for x in tuples],
                      yerr=1.96 * np.array([np.std(x[1]) for x in tuples]) * (1 / np.sqrt(int(args[2]))),
                      color='g')
-        plt.title('Two-Stage Model Test Accuracy vs. Number Training Examples')
+        plt.title('Dual Model Test Accuracy vs. Number Training Examples')
         plt.xlabel('Number of Training Examples')
         plt.ylabel('Test Accuracy')
         plt.ylim([0, 1])
-        plt.savefig('./two_stage_data_error_bar_unconstrained.png')
+        plt.savefig('./ibm_dual_data_error_bar_%s.png' % ('constrained' if CONSTRAIN else 'unconstrained'))
         plt.clf()
 
         # Create and Save Level Error Bar
@@ -155,11 +158,11 @@ if __name__ == "__main__":
         plt.errorbar([x[0] for x in tuples], [np.mean(x[1]) for x in tuples],
                      yerr=1.96 * np.array([np.std(x[1]) for x in tuples]) * (1 / np.sqrt(int(args[2]))),
                      color='g')
-        plt.title('Two-Stage Model Level Selection Accuracy vs. Number Training Examples')
+        plt.title('Dual Model Level Selection Accuracy vs. Number Training Examples')
         plt.xlabel('Number of Training Examples')
         plt.ylabel('Level Selection Accuracy')
         plt.ylim([0, 1])
-        plt.savefig('./two_stage_level_error_bar_unconstrained.png')
+        plt.savefig('./ibm_dual_level_error_bar_%s.png' % ('constrained' if CONSTRAIN else 'unconstrained'))
         plt.clf()
 
         # Create and Save Level Confusion Matrix
@@ -169,4 +172,4 @@ if __name__ == "__main__":
         print avg_df
         for lvl in avg_df.index:
             avg_df.loc[lvl] /= 0.01 * sum(avg_df.loc[lvl])
-        avg_df.to_csv('dual_confusion.csv', encoding='utf-8')
+        avg_df.to_csv('ibm_dual_confusion_%s.csv' % ('constrained' if CONSTRAIN else 'unconstrained'), encoding='utf-8')
