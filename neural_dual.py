@@ -11,8 +11,9 @@ from preprocessor.reader import *
 from random import shuffle
 import matplotlib.pyplot as plt
 import numpy as np
-import sys
 import pandas
+import tensorflow as tf
+import sys
 
 CONSTRAIN = False
 
@@ -24,6 +25,7 @@ def data_curve(save_id, step=20, save_fig=False):
     """
     Plots accuracy over number of examples, across all-levels.
     """
+    tf.reset_default_graph()
     data = {}
     for lvl in levels:
         nl_tokens, ml_tokens = get_tokens(nl_format % lvl), get_tokens(ml_format % lvl)
