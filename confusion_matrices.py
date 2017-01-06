@@ -5,6 +5,7 @@ Generates confusion matrices for the specified configuration, to aid in error an
 
 Usage: python confusion_matrices [all|single|dual] [Num-Trials] [Level]
 """
+import tensorflow as tf
 from models.ibm2 import IBM2
 from models.nn_classifier import NNClassifier
 from models.rnn_classifier import RNNClassifier
@@ -41,6 +42,7 @@ def get_dataframe(level, model='ibm2'):
     :param level: Level to train on.
     :return DataFrame representing the Confusion Matrix.
     """
+    tf.reset_default_graph()
     # Load Data
     nl_tokens, ml_tokens = get_tokens(nl_format % level), get_tokens(ml_format % level)
     ml_commands = get_tokens(commands_format % level)
