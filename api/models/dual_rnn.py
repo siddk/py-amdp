@@ -207,7 +207,7 @@ class RNNDual():
         :return: List of tokens representing predicted command, and score.
         """
         seq = np.zeros((self.max_len), dtype=np.int32)
-        for i in range(len(nl_command)):
+        for i in range(min(len(nl_command), self.max_len)):
             seq[i] = self.word2id.get(nl_command[i], UNK_ID)
         
         lvl = self.session.run(self.lvl_probs, feed_dict={self.X: [seq], self.X_len: [len(nl_command)],

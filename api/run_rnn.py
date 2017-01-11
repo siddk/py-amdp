@@ -11,7 +11,12 @@ import pickle
 
 CONSTRAIN = False
 
-nl_format, ml_format = "../clean_data/test/%s.en", "../clean_data/test/%s.ml"
+# CLEANED
+# nl_format, ml_format = "../clean_data/test/%s.en", "../clean_data/test/%s.ml"
+# commands_format = "../clean_data/test/%s.commands" if CONSTRAIN else "../clean_data/%s.commands"
+
+# RAW
+nl_format, ml_format = "../clean_data/%s.en", "../clean_data/%s.ml"
 commands_format = "../clean_data/test/%s.commands" if CONSTRAIN else "../clean_data/%s.commands"
 levels = ['L0', 'L1', 'L2']
 
@@ -40,8 +45,10 @@ def train_model(step=20):
     model = RNNDual(data['L0'][0], data['L1'][0], data['L2'][0], data['L0'][2], data['L1'][2], 
                     data['L2'][2])
     
-    for c in range(step, min(map(lambda z: len(z[0]), data.values())), step):
-        model.fit(c)
+    # for c in range(step, min(map(lambda z: len(z[0]), data.values())), step):
+        # model.fit(c)
+    for _ in range(5):
+        model.fit(min(map(lambda z: len(z[0]), data.values())))
         correct, total, lvl_correct = 0, 0, 0
         for lvl in data:
             pc_test = data[lvl][1]
@@ -56,7 +63,7 @@ def train_model(step=20):
                     if best_trans == example_ml:
                         correct += 1
                 total += 1
-                
+                    
         print 'Level Selection Accuracy:', float(lvl_correct) / float(total)
         print 'Test Accuracy:', float(correct) / float(total)
 

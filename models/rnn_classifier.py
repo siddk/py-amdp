@@ -19,8 +19,8 @@ UNK, UNK_ID = "<<UNK>>", 1
 
 
 class RNNClassifier():
-    def __init__(self, parallel_corpus, commands, embedding_size=20, lstm_size=60, hidden_size=50,
-                 epochs=10, batch_size=16):
+    def __init__(self, parallel_corpus, commands, embedding_size=30, rnn_size=50, h1_size=60,
+                 h2_size=50, epochs=10, batch_size=16):
         """
         Instantiates and Trains Model using the given parallel corpus.
 
@@ -31,7 +31,7 @@ class RNNClassifier():
         """
         self.commands, self.labels = commands, {" ".join(x): i for (i, x) in enumerate(commands)}
         self.pc, self.epochs, self.bsz = parallel_corpus, epochs, batch_size
-        self.embedding_sz, self.lstm_sz, self.hidden_sz = embedding_size, lstm_size, hidden_size
+        self.embedding_sz, self.rnn_sz, self.h1_sz, self.h2_sz = embedding_size, rnn_size, h1_size, h2_size
         self.init = tf.truncated_normal_initializer(stddev=0.5)
         self.session = tf.Session()
 
@@ -99,20 +99,27 @@ class RNNClassifier():
         embedding = tf.nn.dropout(embedding, self.keep_prob)
 
         # LSTM
-        cell = tf.nn.rnn_cell.GRUCell(self.lstm_sz)
+        cell = tf.nn.rnn_cell.GRUCell(self.rnn_sz)
         _, state = tf.nn.dynamic_rnn(cell, embedding, sequence_length=self.X_len, dtype=tf.float32)
         h_state = state                                             # Shape [None, lstm_sz]
 
-        # ReLU Layer
-        H_W = tf.get_variable("Hidden_W", shape=[self.lstm_sz, self.hidden_sz], dtype=tf.float32,
-                              initializer=self.init)
-        H_B = tf.get_variable("Hidden_B", shape=[self.hidden_sz], dtype=tf.float32,
-                              initializer=self.init)
-        hidden = tf.nn.relu(tf.matmul(h_state, H_W) + H_B)
+        # ReLU Layer 1
+        H1_W = tf.get_variable("H1_W", shape=[self.rnn_sz, self.h1_sz], dtype=tf.float32,
+                               initializer=self.init)
+        H1_B = tf.get_variable("H1_B", shape=[self.h1_sz], dtype=tf.float32,
+                               initializer=self.init)
+        h1 = tf.nn.relu(tf.matmul(h_state, H1_W) + H1_B)
+
+        # ReLU Layer 2
+        H2_W = tf.get_variable("H2_W", shape=[self.h1_sz, self.h2_sz], dtype=tf.float32,
+                               initializer=self.init)
+        H2_B = tf.get_variable("H2_B", shape=[self.h2_sz], dtype=tf.float32,
+                               initializer=self.init)
+        hidden = tf.nn.relu(tf.matmul(h1, H2_W) + H2_B)
         hidden = tf.nn.dropout(hidden, self.keep_prob)
 
         # Output Layer
-        O_W = tf.get_variable("Output_W", shape=[self.hidden_sz, len(self.commands)],
+        O_W = tf.get_variable("Output_W", shape=[self.h2_sz, len(self.commands)],
                               dtype=tf.float32, initializer=self.init)
         O_B = tf.get_variable("Output_B", shape=[len(self.commands)], dtype=tf.float32,
                               initializer=self.init)
