@@ -1,5 +1,5 @@
 """
-train_nn.py 
+run_nn.py 
 
 Core file for training and checkpointing the Dual NN Model - Also has  command line 
 functionality for loading and running inference on a given natural language command.
