@@ -7,9 +7,9 @@ First, note that in each of the *_ckpt checkpoint directories, are serialized fo
 of the three different models: the IBM Model 2 (ibm\_ckpt), the Feed-Forward Neural
 Network (nn\_ckpt), and the Recurrent Neural Network (rnn\_ckpt). 
 
-To train up a new model, you can use the run_'model'.py files. First, though, move (or delete) the 
-existing subdirectories, and create a new empty directory called 'model'_ckpt/. Then, run the 
-respective run_'model'.py file (for example, 'python run\_rnn.py').
+To train up a new model, you can use the run\_'model'.py files. First, though, move (or delete) the 
+existing subdirectories, and create a new empty directory called 'model'\_ckpt/. Then, run the 
+respective run\_'model'.py file (for example, 'python run\_rnn.py').
 
 There are two ways to run existing pre-trained models. The first is via a call to run_'model'.py. 
 This will load the model, and drop you into a REPL, where you can enter natural language commands
