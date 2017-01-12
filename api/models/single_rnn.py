@@ -5,7 +5,6 @@ Single model with an recurrent neural network encoder.
 """
 import numpy as np
 import tensorflow as tf
-import tflearn
 
 PAD, PAD_ID = "<<PAD>>", 0
 UNK, UNK_ID = "<<UNK>>", 1
@@ -148,9 +147,10 @@ class RNNClassifier():
 
         :return: List of tokens representing predicted command, and score.
         """
-        seq, seq_len = [self.word2id.get(w, UNK_ID) for w in nl_command], len(nl_command)
-        seq = tflearn.data_utils.pad_sequences([seq], maxlen=self.train_x.shape[1])
-        y = self.session.run(self.probs, feed_dict={self.X: seq, self.X_len: [seq_len],
+        seq, seq_len = np.zeros((max(self.lengths))), len(nl_command)
+        for i in range(min(len(nl_command), len(seq))):
+            seq[i] = self.word2id.get(nl_command[i], UNK_ID)
+        y = self.session.run(self.probs, feed_dict={self.X: [seq], self.X_len: [seq_len],
                                                     self.keep_prob: 1.0})
         [pred_command] = np.argmax(y, axis=1)
         return self.commands[pred_command], y[0][pred_command]

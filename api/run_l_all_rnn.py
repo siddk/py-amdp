@@ -1,8 +1,8 @@
 """
-run_single_rnn.py
+run_single_rnn_separate.py
 
-Core file for training and checkpointing the Single RNN Model - Also has  command line 
-functionality for loading and running inference on a given natural language command.
+Same as run_single_rnn, but treats shared reward functions as separate, across 
+different levels.
 """
 from models.single_rnn import RNNClassifier
 from random import shuffle
@@ -21,6 +21,8 @@ commands_format = "../clean_data/intense_clean_no_punct/%s.commands" if CONSTRAI
 # RAW
 # nl_format, ml_format = "../clean_data/%s.en", "../clean_data/%s.ml"
 
+levels = ['L0', 'L1', 'L2']
+
 prefix = {"agentInRegion": "aReg",
           "agentInRoom": "aRoom",
           "blockInRegion": "bReg",
@@ -31,31 +33,40 @@ prefix = {"agentInRegion": "aReg",
           "room1": "r1",
           "room2": "r2",
           "door0": "d0",
-          "door1": "d1"}
+          "door1": "d1",
+          "L0" : "L0",
+          "L1" : "L1",
+          "L2" : "L2"}
 
-def get_tokens(file_name):
+def get_tokens(file_name, level=None):
     """
     Returns list of sentences, where each sentence is represented as a list of tokens.
     """
     out_list = []
     with open(file_name, 'r') as f:
         for line in f:
-            out_list.append(line.split())
+            if level is not None:
+                out_list.append([level] + line.split())
+            else:
+                out_list.append(line.split())
     return out_list
 
 def convert(command):
     return " ".join([prefix[x] for x in command])
 
-def train_model(level):
+def train_model():
     # Load Data
-    nl_tokens, ml_tokens = get_tokens(nl_format % level), get_tokens(ml_format % level)
-    ml_commands = get_tokens(commands_format % level)
-    pc = zip(*(nl_tokens, ml_tokens))
+    pc, ml_commands = [], []
+    for level in levels:
+        nl_tokens, ml_tokens = get_tokens(nl_format % level), get_tokens(ml_format % level, level)
+        lvl_commands = get_tokens(commands_format % level, level)
+        pc.extend(zip(*(nl_tokens, ml_tokens)))
+        ml_commands.extend(lvl_commands)
     shuffle(pc)
     shuffle(pc)
     shuffle(pc)
     pc_train, pc_test = pc[:int(0.9 * len(pc))], pc[int(0.9 * len(pc)):]
-
+ 
     # Initialize Confusion Matrix
     if CONFUSION:
         confusion_matrix = {}
@@ -83,32 +94,27 @@ def train_model(level):
 
         print 'Test Accuracy:', float(correct) / float(total)
     
-    model.saver.save(model.session, '%s_single_rnn_ckpt/rnn.ckpt' % level)
-    with open('%s_single_rnn_ckpt/vocab.pik' % level, 'w') as f:
-        pickle.dump(pc_train, f)
+    model.saver.save(model.session, 'l_all_rnn_ckpt/rnn.ckpt')
+    with open('l_all_rnn_ckpt/vocab.pik', 'w') as f:
+        pickle.dump((pc_train, ml_commands), f)
     
     if CONFUSION:
         avg_df = pandas.DataFrame(confusion_matrix)
         for i in avg_df.index:
             avg_df.loc[i] /= 0.01 * sum(avg_df.loc[i])
-        avg_df.to_csv('%s_single_rnn_confusion.csv' % level, encoding='utf-8')
+        avg_df.to_csv('l_all_rnn_confusion.csv', encoding='utf-8')
 
-def load_model(level):
-    with open('%s_single_rnn_ckpt/vocab.pik' % level, 'r') as f:
-        pc_train = pickle.load(f)
-    ml_commands = get_tokens(commands_format % level)
+def load_model():
+    with open('l_all_rnn_ckpt/vocab.pik', 'r') as f:
+        pc_train, ml_commands = pickle.load(f)
     model = RNNClassifier(pc_train, ml_commands)
-    model.saver.restore(model.session, '%s_single_rnn_ckpt/rnn.ckpt' % level)
+    model.saver.restore(model.session, 'l_all_rnn_ckpt/rnn.ckpt')
     return model
 
 if __name__ == "__main__":
-    # Read Command Line Arguments
-    args = sys.argv
-    lvl = args[1]
-
-    if not os.path.exists("%s_single_rnn_ckpt/checkpoint" % lvl):
-        train_model(lvl)
-    m = load_model(lvl)
+    if not os.path.exists("l_all_rnn_ckpt/checkpoint"):
+        train_model()
+    m = load_model()
     print 'Model Loaded!'
     while True:
         nl_command = raw_input("Enter a Natural Language Command: ")
