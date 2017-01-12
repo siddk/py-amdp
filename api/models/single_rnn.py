@@ -31,7 +31,7 @@ class RNNClassifier():
         self.word2id, self.id2word = self.build_vocabulary()
 
         # Vectorize Parallel Corpus
-        self.lengths = [len(n) for (n, _) in self.pc]
+        self.lengths = [len(n) for n, _ in self.pc]
         self.train_x, self.train_y = self.vectorize()
 
         # Setup Placeholders

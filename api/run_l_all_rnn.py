@@ -78,7 +78,7 @@ def train_model():
     model = RNNClassifier(pc_train, ml_commands)
     for idx in range(5):
         model.fit(len(pc_train))
-        correct, total = 0, 0
+        correct, total, lvl_correct = 0, 0, 0
         for i in range(len(pc_test) - 1):
             # Get test command
             example_en, example_ml = pc_test[i]
@@ -87,12 +87,16 @@ def train_model():
             best_trans, score = model.score(example_en)
             if best_trans == example_ml:
                 correct += 1
+            if best_trans[0] == example_ml[0]:
+                print "HERE!"
+                lvl_correct += 1
             total += 1
             
             if CONFUSION and idx == 4:
                 confusion_matrix[convert(example_ml)][convert(best_trans)] += 1
 
         print 'Test Accuracy:', float(correct) / float(total)
+        print 'Level Selection Accuracy:', float(lvl_correct) / float(total)
     
     model.saver.save(model.session, 'l_all_rnn_ckpt/rnn.ckpt')
     with open('l_all_rnn_ckpt/vocab.pik', 'w') as f:
