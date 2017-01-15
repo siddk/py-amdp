@@ -12,7 +12,7 @@ UNK, UNK_ID = "<<UNK>>", 1
 
 class RNNClassifier():
     def __init__(self, parallel_corpus, commands, embedding_size=30, rnn_size=50, h1_size=60,
-                 h2_size=50, epochs=10, batch_size=16):
+                 h2_size=50, epochs=10, batch_size=16, verbose=1):
         """
         Instantiates and Trains Model using the given parallel corpus.
 
@@ -22,7 +22,7 @@ class RNNClassifier():
         :param commands: List of Lists, where each element is one of the possible commands (labels)
         """
         self.commands, self.labels = commands, {" ".join(x): i for (i, x) in enumerate(commands)}
-        self.pc, self.epochs, self.bsz = parallel_corpus, epochs, batch_size
+        self.pc, self.epochs, self.bsz, self.verbose = parallel_corpus, epochs, batch_size, verbose
         self.embedding_sz, self.rnn_sz, self.h1_sz, self.h2_sz = embedding_size, rnn_size, h1_size, h2_size
         self.init = tf.truncated_normal_initializer(stddev=0.5)
         self.session = tf.Session()
@@ -139,7 +139,8 @@ class RNNClassifier():
                                                       self.Y: self.train_y[start:end]})
                 curr_loss += loss
                 batches += 1
-            print 'Epoch %s Average Loss:' % str(e), curr_loss / batches
+            if self.verbose == 1:
+                print 'Epoch %s Average Loss:' % str(e), curr_loss / batches
 
     def score(self, nl_command):
         """
