@@ -18,7 +18,7 @@ commands_format = "../clean_data/intense_clean_no_punct/%s.commands" if CONSTRAI
 # RAW
 # nl_format, ml_format = "../clean_data/%s.en", "../clean_data/%s.ml"
 # commands_format = "../clean_data/test/%s.commands" if CONSTRAIN else "../clean_data/%s.commands"
-# levels = ['L0', 'L1', 'L2']
+levels = ['L0', 'L1', 'L2']
 
 def get_tokens(file_name):
     """

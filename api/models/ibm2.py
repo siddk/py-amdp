@@ -8,6 +8,7 @@ EM Inference via IBM 1, then performs IBM 2 EM to learn alignments.
 from __future__ import division
 import sys
 import math
+import numpy as np
 import random
 from collections import defaultdict
 from ibm import IBMModel, Counts, MIN_PROB
@@ -138,20 +139,37 @@ class IBM2(IBMModel):
                 p = joint / norm
                 self.eta[l][m] = p
 
-    def score(self, english, machine):
+    # def score(self, english, machine):
+    #     """
+    #     Compute probability of translating source sentence into target sentence, by marginalizing
+    #     over all alignments.
+    #     """
+    #     l, m = len(machine), len(english)
+    #     machine, english = [None] + machine, ['UNUSED'] + english
+    #     eta, prob = self.eta[l][m], 0.0
+
+    #     for i in range(l + 1):
+    #         for j in range(1, m + 1):
+    #             prob += self.delta[i][j][l][m] * self.tau[english[j]][machine[i]]
+
+    #     return eta * prob
+    def score(self, english, machine, num_samples=500):
         """
-        Compute probability of translating source sentence into target sentence, by marginalizing
-        over all alignments.
+        Compute probability of translating source sentence into target sentence, by sampling
+        over all alignments. 
         """
         l, m = len(machine), len(english)
-        machine, english = [None] + machine, ['UNUSED'] + english
+        machine, english = [None] + machine, ['UNUSED'] + english 
         eta, prob = self.eta[l][m], 0.0
-
-        for i in range(l + 1):
+       
+        for alignment in range(num_samples):
+            alignment_prob = 1.0
             for j in range(1, m + 1):
-                prob += self.delta[i][j][l][m] * self.tau[english[j]][machine[i]]
-
+                i = np.random.randint(l + 1)
+                alignment_prob *= self.delta[i][j][l][m] * self.tau[english[j]][machine[i]]
+            prob += alignment_prob
         return eta * prob
+
 
 
 class Model2Counts(Counts):
