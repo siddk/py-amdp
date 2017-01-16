@@ -178,24 +178,28 @@ class RNNDual():
             curr_loss, batches = 0.0, 0.0
             for start, end in zip(range(0, len(self.train_x['L0'][:chunk_size]) - self.bsz, self.bsz),
                                   range(self.bsz, len(self.train_x['L0'][:chunk_size]), self.bsz)):
-                l0_loss, _ = self.session.run([self.l0_loss + self.lvl_loss, self.l0_train_op],
-                                              feed_dict={self.X: self.train_x['L0'][start:end],
-                                                         self.X_len: self.lengths['L0'][start:end],
-                                                         self.keep_prob: 0.5,
-                                                         self.L0_Y: self.train_y['L0'][start:end],
-                                                         self.LVL_Y: np.zeros([self.bsz]) + 0})
-                l1_loss, _ = self.session.run([self.l1_loss + self.lvl_loss, self.l1_train_op],
-                                              feed_dict={self.X: self.train_x['L1'][start:end],
-                                                         self.X_len: self.lengths['L1'][start:end],
-                                                         self.keep_prob: 0.5,
-                                                         self.L1_Y: self.train_y['L1'][start:end],
-                                                         self.LVL_Y: np.zeros([self.bsz]) + 1})
-                l2_loss, _ = self.session.run([self.l2_loss + self.lvl_loss, self.l2_train_op],
-                                              feed_dict={self.X: self.train_x['L2'][start:end],
-                                                         self.X_len: self.lengths['L2'][start:end],
-                                                         self.keep_prob: 0.5,
-                                                         self.L2_Y: self.train_y['L2'][start:end],
-                                                         self.LVL_Y: np.zeros([self.bsz]) + 2})
+                l0_loss, l1_loss, l2_loss = 0, 0, 0
+                if end < len(self.train_x['L0']):
+                    l0_loss, _ = self.session.run([self.l0_loss + self.lvl_loss, self.l0_train_op],
+                                                feed_dict={self.X: self.train_x['L0'][start:end],
+                                                            self.X_len: self.lengths['L0'][start:end],
+                                                            self.keep_prob: 0.5,
+                                                            self.L0_Y: self.train_y['L0'][start:end],
+                                                            self.LVL_Y: np.zeros([self.bsz]) + 0})
+                if end < len(self.train_x['L1']):
+                    l1_loss, _ = self.session.run([self.l1_loss + self.lvl_loss, self.l1_train_op],
+                                                feed_dict={self.X: self.train_x['L1'][start:end],
+                                                            self.X_len: self.lengths['L1'][start:end],
+                                                            self.keep_prob: 0.5,
+                                                            self.L1_Y: self.train_y['L1'][start:end],
+                                                            self.LVL_Y: np.zeros([self.bsz]) + 1})
+                if end < len(self.train_x['L2']):
+                    l2_loss, _ = self.session.run([self.l2_loss + self.lvl_loss, self.l2_train_op],
+                                                feed_dict={self.X: self.train_x['L2'][start:end],
+                                                            self.X_len: self.lengths['L2'][start:end],
+                                                            self.keep_prob: 0.5,
+                                                            self.L2_Y: self.train_y['L2'][start:end],
+                                                            self.LVL_Y: np.zeros([self.bsz]) + 2})
                 curr_loss += l0_loss + l1_loss + l2_loss
                 batches += 1
             print 'Epoch %s Average Loss:' % str(e), curr_loss / batches
