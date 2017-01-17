@@ -6,7 +6,6 @@ Core file for training and checkpointing the Single RNN Model with data from one
 functionality for loading and running inference on a given natural language command.
 """
 from models.single_rnn import RNNClassifier
-import tensorflow as tf
 from random import shuffle
 import os
 import pandas
