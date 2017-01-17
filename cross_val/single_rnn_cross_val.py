@@ -54,12 +54,10 @@ def run_cross_val(data, out, N_10_EPOCHS=5):
             for (example_en, example_ml) in val[lvl]:
                 # Pick Level, Translation
                 best_trans, score = model.score(example_en)
-                if lvl == levels[level]:
+                if best_trans == example_ml:
+                    correct += 1
+                if best_trans[0] == example_ml[0]:
                     lvl_correct += 1
-                    if best_trans == example_ml:
-                        correct += 1
-                    if best_trans[0] == example_ml[0]:
-                        lvl_correct += 1
                 total += 1
         
         print 'Level Selection:', float(lvl_correct) / float(total)
