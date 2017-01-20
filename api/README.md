@@ -24,6 +24,4 @@ port 5000.
 
 You can then query the API via a call to CURL as follows:
 
-curl http://localhost:5000/model -d "command=Go to the red room" -X PUT
-
-Note that you enter a natural language command via -d "command=COMMAND GOES HERE".
+curl http://localhost:5000/model?command=Go+to+the+red+room

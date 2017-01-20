@@ -3,8 +3,7 @@ api.py
 
 Starts a lightweight Flask API Server, that can be queried via calls to CURL
 """
-from flask import Flask, request
-from flask_restful import Resource, Api
+from flask import Flask, request, jsonify
 import run_ibm
 import run_nn
 import run_rnn
@@ -12,10 +11,9 @@ import sys
 import tensorflow as tf
 
 app = Flask(__name__)
-api = Api(app)
 
 ### CHANGE THIS: [ibm, nn, rnn] ###
-model_type = 'ibm' 
+model_type = 'rnn' 
 
 # Model Switch Code
 if model_type == 'rnn':
@@ -27,18 +25,17 @@ elif model_type == 'ibm':
 else:
     raise UserWarning("Model not defined!")
 
-class ModelInterface(Resource):
-    def put(self):
-        nl_command = request.form['command']
-        if model_type == 'rnn':
-            rf, _, lvl, _ = m.score(nl_command.split())
-        elif model_type == 'nn':
-            rf, _, lvl, _ = m.score(nl_command.split())
-        elif model_type == 'ibm':
-            lvl, rf = run_ibm.score(m, j, nl_command.split())
-        return {"Level": lvl, "Reward Function": " ".join(rf)}
-
-api.add_resource(ModelInterface, '/model')
+@app.route('/model')
+def model():
+    nl_command = request.args.get('command')
+    if model_type == 'rnn':
+        print nl_command
+        rf, _, lvl, _ = m.score(nl_command.lower().split())
+    elif model_type == 'nn':
+        rf, _, lvl, _ = m.score(nl_command.lower().split())
+    elif model_type == 'ibm':
+        lvl, rf = run_ibm.score(m, j, nl_command.lower().split())
+    return str(lvl) + " " + " ".join(rf) + "\n"
 
 if __name__ == "__main__":
     app.run()
