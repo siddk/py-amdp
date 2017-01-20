@@ -10,11 +10,6 @@ time mpiexec -n 5 python run_single_rnn_mix.py L0 L2
 echo ''
 echo ''
 
-echo 'L1 - L2'
-time mpiexec -n 5 python run_single_rnn_mix.py L1 L2
-echo ''
-echo ''
-
 echo 'L1 - L0'
 time mpiexec -n 5 python run_single_rnn_mix.py L1 L0
 echo ''
