@@ -65,7 +65,7 @@ if __name__ == "__main__":
     args = sys.argv
     lvl = args[1]
     test_lvl = args[2]
-    clean = True
+    clean = False
     
     data_path = "%s_data.pik" % ("clean" if clean else "raw")
 

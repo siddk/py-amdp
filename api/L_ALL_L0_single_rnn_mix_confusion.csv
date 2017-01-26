@@ -1,0 +1,16 @@
+,aRoom  r0,aRoom  r0 bRoom  r0,aRoom  r0 bRoom  r1,aRoom  r0 bRoom  r2,aRoom  r1,aRoom  r1 bRoom  r0,aRoom  r1 bRoom  r1,aRoom  r1 bRoom  r2,aRoom  r2,aRoom  r2 bRoom  r0,aRoom  r2 bRoom  r1,aRoom  r2 bRoom  r2,bRoom  r0,bRoom  r1,bRoom  r2
+aRoom  r0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,100.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+aRoom  r0 bRoom  r0,,,,,,,,,,,,,,,
+aRoom  r0 bRoom  r1,,,,,,,,,,,,,,,
+aRoom  r0 bRoom  r2,,,,,,,,,,,,,,,
+aRoom  r1,,,,,,,,,,,,,,,
+aRoom  r1 bRoom  r0,,,,,,,,,,,,,,,
+aRoom  r1 bRoom  r1,,,,,,,,,,,,,,,
+aRoom  r1 bRoom  r2,0.0,0.0,0.0,0.0,0.0,0.0,0.0,100.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+aRoom  r2,,,,,,,,,,,,,,,
+aRoom  r2 bRoom  r0,,,,,,,,,,,,,,,
+aRoom  r2 bRoom  r1,,,,,,,,,,,,,,,
+aRoom  r2 bRoom  r2,,,,,,,,,,,,,,,
+bRoom  r0,,,,,,,,,,,,,,,
+bRoom  r1,,,,,,,,,,,,,,,
+bRoom  r2,0.0,0.0,0.0,0.0,0.0,0.0,0.0,46.1538461538,0.0,0.0,0.0,0.0,0.0,0.0,53.8461538462

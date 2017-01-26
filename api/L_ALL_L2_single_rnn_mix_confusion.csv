@@ -1,0 +1,16 @@
+,aReg  r0,aReg  r0 bReg  r0,aReg  r0 bReg  r1,aReg  r0 bReg  r2,aReg  r1,aReg  r1 bReg  r0,aReg  r1 bReg  r1,aReg  r1 bReg  r2,aReg  r2,aReg  r2 bReg  r0,aReg  r2 bReg  r1,aReg  r2 bReg  r2,bReg  r0,bReg  r1,bReg  r2
+aReg  r0,,,,,,,,,,,,,,,
+aReg  r0 bReg  r0,,,,,,,,,,,,,,,
+aReg  r0 bReg  r1,,,,,,,,,,,,,,,
+aReg  r0 bReg  r2,,,,,,,,,,,,,,,
+aReg  r1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,100.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+aReg  r1 bReg  r0,,,,,,,,,,,,,,,
+aReg  r1 bReg  r1,,,,,,,,,,,,,,,
+aReg  r1 bReg  r2,0.0,0.0,0.0,0.0,0.0,0.0,0.0,100.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+aReg  r2,,,,,,,,,,,,,,,
+aReg  r2 bReg  r0,,,,,,,,,,,,,,,
+aReg  r2 bReg  r1,,,,,,,,,,,,,,,
+aReg  r2 bReg  r2,,,,,,,,,,,,,,,
+bReg  r0,,,,,,,,,,,,,,,
+bReg  r1,,,,,,,,,,,,,,,
+bReg  r2,0.0,0.0,0.0,0.0,0.0,0.0,0.0,33.3333333333,0.0,0.0,0.0,0.0,0.0,0.0,66.6666666667
