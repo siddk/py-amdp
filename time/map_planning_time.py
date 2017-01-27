@@ -1,0 +1,97 @@
+"""
+map_planning_times.py
+
+Map each command in dataset to its mean planning time and save to disk
+"""
+from models.single_rnn import RNNClassifier
+import os
+import pickle
+import sys
+import csv
+
+nl_format, ml_format = "../clean_data/%s.en", "../clean_data/%s.ml"
+
+levels = ['L0', 'L1', 'L2']
+
+def map_machine_lang(pf, lvl):
+    pf = pf.replace('(', ' ').replace(',','').replace(')','')
+    if 'L{0}'.format(lvl) in ['L1', 'L2']:
+        pf = pf.replace('Room','Region')
+    if 'blockInRoomAgentInRoom' in pf:
+        split = pf.split()
+        i = split[0].index('AgentInRoom')
+        brf = split[0][:i]
+        arf = split[0][i:]
+        arf = arf[:1].lower() + arf[1:]
+        pf = ' '.join([arf, split[3], split[4], brf, split[1], split[2]])
+    if 'blockInRegionAgentInRegion' in pf:
+        split = pf.split()
+        i = split[0].index('AgentInRegion')
+        brf = split[0][:i]
+        arf = split[0][i:]
+        arf = arf[:1].lower() + arf[1:]
+        pf = ' '.join([arf, split[3], split[4], brf, split[1], split[2]])
+    return 'L{0} {1}'.format(lvl, pf)
+
+def get_tokens(file_name, level=None):
+    """
+    Returns list of sentences, where each sentence is represented as a list of tokens.
+    """
+    out_list = []
+    with open(file_name, 'r') as f:
+        for line in f:
+            if level is not None:
+                out_list.append([level] + line.split())
+            else:
+                out_list.append(line.split())
+    return out_list
+
+def load_model():
+    with open('../api/l_all_rnn_ckpt/vocab.pik', 'r') as f:
+        pc_train, ml_commands = pickle.load(f)
+    model = RNNClassifier(pc_train, ml_commands)
+    model.saver.restore(model.session, '../api/l_all_rnn_ckpt/rnn.ckpt')
+    return model
+
+if __name__ == "__main__":
+    if not os.path.exists("../api/l_all_rnn_ckpt/checkpoint"):
+        print 'Error: Unable to find checkpoint for Single-RNN - please train the model!'
+        sys.exit(0)
+    m = load_model()
+    print 'Model Loaded!'
+
+    timer = {'L0 goNorth':[], 'L0 goSouth':[], 'L0 goEast':[], 'L0 goWest':[],}
+    out_header = ['small AMDP planner time',
+                  'small AMDP std dev',
+                  'small No heuristic AMDP planner',
+                  'small base std dev',
+                  'large AMDP planner time',
+                  'large AMDP std dev',
+                  'large No heuristic AMDP planner',
+                  'large base std dev']
+
+    with open('./planning_times.csv') as data:
+        reader = csv.DictReader(data)
+        for row in reader:
+            key = map_machine_lang(row['proposition function'], row['level solved at'])
+            timer[key] = [row['small AMDP planner time'],
+                          row['small AMDP std dev'],
+                          row['small No heuristic AMDP planner'],
+                          row['small base std dev'],
+                          row['large AMDP planner time'],
+                          row['large AMDP std dev'],
+                          row['large No heuristic AMDP planner'],
+                          row['large base std dev']]
+
+    pc = []
+    for level in levels:
+        nl_tokens = get_tokens(nl_format % level)
+        pc.extend(nl_tokens)
+    
+    with open('./data_planning_times.csv', 'wb') as out:
+        writer = csv.writer(out)
+        writer.writerow(out_header)
+
+        for nl_command in pc:
+            rf, _ = m.score(nl_command)
+            writer.writerow(timer[' '.join(rf)])

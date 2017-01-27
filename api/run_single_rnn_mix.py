@@ -15,8 +15,12 @@ import sys
 CONSTRAIN = False
 CONFUSION = True
 
+L0_LIM = 869
+L0_COMMANDS_LIM = 15
+
 # CLEANED
-nl_format, ml_format = "../clean_data/intense_clean_no_punct/%s.en", "../clean_data/intense_clean_no_punct/%s.ml"
+nl_format, ml_format = "../clean_data/%s.en", "../clean_data/%s.ml"
+#nl_format, ml_format = "../clean_data/intense_clean_no_punct/%s.en", "../clean_data/intense_clean_no_punct/%s.ml"
 commands_format = "../clean_data/intense_clean_no_punct/%s.commands" if CONSTRAIN else "../clean_data/%s.commands"
 
 # RAW
@@ -66,34 +70,60 @@ def train_model(level, test_level):
     # Load Data
     if level != test_level:
         pc = []
-        while levels[0] != level:
-            shuffle(levels)
+        if level != 'L_ALL':
+            while levels[0] != level:
+                shuffle(levels)
         for lvl in levels:
             nl_tokens, ml_tokens = get_tokens(nl_format % lvl), get_tokens(ml_format % lvl)
-            if lvl != level and not (level in ['L1', 'L2'] and lvl in ['L1', 'L2']):
+            if lvl == 'L0':
+                nl_tokens, ml_tokens = nl_tokens[:L0_LIM], ml_tokens[:L0_LIM]
+            if lvl != level and not (level in ['L1', 'L2'] and lvl in ['L1', 'L2']) and level != 'L_ALL':
                 ml_tokens = [rf_map[" ".join(x)].split(" ") for x in ml_tokens]
+            if lvl != 'L0' and level == 'L_ALL':
+                ml_tokens = [rf_map[" ".join(x)].split(" ") for x in ml_tokens]
+            if lvl == test_level and level == 'L_ALL':
+                nl_tokens = nl_tokens[:int(0.9 * len(nl_tokens))]
+                ml_tokens = ml_tokens[:int(0.9 * len(ml_tokens))]
             pc.extend(zip(*(nl_tokens, ml_tokens)))
 
-            if lvl == level:
+            if lvl == level and level != 'L_ALL':
                 train_len = len(nl_tokens)
                 train_commands = get_tokens(commands_format % lvl)
+                if lvl == 'L0':
+                    train_commands = train_commands[:L0_COMMANDS_LIM]
+            if lvl == 'L0' and level == 'L_ALL':
+                train_commands = get_tokens(commands_format % lvl)
+        if level == 'L_ALL':
+            shuffle(pc)
+            shuffle(pc)
+            shuffle(pc)
         pc_train = pc
 
         test_nl_tokens, test_ml_tokens = get_tokens(nl_format % test_level), get_tokens(ml_format % test_level)
-        if test_level != level and not (level in ['L1', 'L2'] and test_level in ['L1', 'L2']):
+        if test_level == 'L0':
+                test_nl_tokens, test_ml_tokens = test_nl_tokens[:L0_LIM], test_ml_tokens[:L0_LIM]
+        if test_level != level and not (level in ['L1', 'L2'] and test_level in ['L1', 'L2']) and level != 'L_ALL':
             test_ml_tokens = [rf_map[" ".join(x)].split(" ") for x in test_ml_tokens]
+        if test_level != 'L0' and level == 'L_ALL':
+            test_ml_tokens = [rf_map[" ".join(x)].split(" ") for x in test_ml_tokens]
+        test_nl_tokens = test_nl_tokens[int(0.9 * len(test_nl_tokens)):]
+        test_ml_tokens = test_ml_tokens[int(0.9 * len(test_ml_tokens)):]
         pc_test = zip(*(test_nl_tokens, test_ml_tokens))
         shuffle(pc_test)
         shuffle(pc_test)
         shuffle(pc_test)
     else:
         nl_tokens, ml_tokens = get_tokens(nl_format % level), get_tokens(ml_format % level)
+        if level == 'L0':
+            nl_tokens, ml_tokens = nl_tokens[:L0_LIM], ml_tokens[:L0_LIM]
         train_commands = get_tokens(commands_format % level)
+        if level == 'L0':
+            train_commands = train_commands[:L0_COMMANDS_LIM]
         pc = zip(*(nl_tokens, ml_tokens))
         shuffle(pc)
         shuffle(pc)
         shuffle(pc)
-        pc_train, pc_test = pc[:int(0.9 * len(pc))], pc[int(0.9 * len(pc)):]    
+        pc_train, pc_test = pc[:int(0.9 * len(pc))], pc[int(0.9 * len(pc)):]
 
     # Initialize Confusion Matrix
     if CONFUSION:
@@ -104,7 +134,7 @@ def train_model(level, test_level):
                 confusion_matrix[convert(i)][convert(j)] = 0
 
     model = RNNClassifier(pc_train, train_commands, verbose=0)
-    if level != test_level:
+    if level != test_level and level != 'L_ALL':
         model.train_x = model.train_x[:train_len]
         model.train_y = model.train_y[:train_len]
 
@@ -124,7 +154,10 @@ def train_model(level, test_level):
             if CONFUSION and idx == 4:
                 confusion_matrix[convert(example_ml)][convert(best_trans)] += 1
 
-    print 'Test Accuracy:', float(correct) / float(total)
+    # print 'Test Accuracy:', float(correct) / float(total)
+    sys.stdout.write(str(float(correct) / float(total)) + ',')
+    sys.stdout.flush()
+    print
     
     # model.saver.save(model.session, '%s_%s_single_rnn_mix_ckpt/rnn.ckpt' % (level, test_level))
     # with open('%s_%s_single_rnn_mix_ckpt/vocab.pik' % (level, test_level), 'w') as f:

@@ -57,7 +57,10 @@ def train_model(level, test_level, data):
             correct += 1
         total += 1
     
-    print 'Test Accuracy:', float(correct) / float(total)
+    #print 'Test Accuracy:', float(correct) / float(total)
+    sys.stdout.write(str(float(correct) / float(total)) + ',')
+    sys.stdout.flush()
+    print
 
     
 if __name__ == "__main__":
@@ -65,7 +68,7 @@ if __name__ == "__main__":
     args = sys.argv
     lvl = args[1]
     test_lvl = args[2]
-    clean = True
+    clean = False
     
     data_path = "%s_data.pik" % ("clean" if clean else "raw")
 

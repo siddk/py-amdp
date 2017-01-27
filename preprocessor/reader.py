@@ -6,7 +6,7 @@ import sys
 from itertools import izip
 
 numbers = {0: "zero", 1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven",
-           8: "eight", 9: "nine", 10: "ten", 90: "ninety"}
+           8: "eight", 9: "nine", 10: "ten", 90: "ninety", 180:"one hundred eighty"}
 
 
 def get_tokens(file_name):
@@ -70,9 +70,9 @@ def parse(in_file, out_file):
             toks = [x.lower() if not x.isdigit() else numbers[int(x)] for x in toks]
             if toks[-1] != '.':
                 toks.append('.')
-            out.append((" ".join(toks), ml_line))
+            out.append((" ".join(toks[:len(toks)-1]), ml_line))
 
-    out = clean(out, in_file)
+    #out = clean(out, in_file)
 
     out_ml_file = out_file[:-2] + 'ml'
     with open(out_file, 'w') as f, open(out_ml_file, 'w') as f_ml:

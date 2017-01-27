@@ -1,13 +1,16 @@
 """
-gen_cross_val.py 
+gen_mix.py 
 
-Script that generates pickled versions of the cross-validation data.
+Script that generates pickled versions of the mix data.
 """
 from random import shuffle
 import pickle
 
 CLEAN = False
 CONSTRAIN = False
+
+L0_LIM = 869
+L0_COMMANDS_LIM = 15
 
 # CLEANED
 nl_format, ml_format = "../clean_data/%s.en", "../clean_data/%s.ml"
@@ -38,6 +41,9 @@ def split_data():
     for level in levels:
         nl_tokens, ml_tokens = get_tokens(nl_format % level), get_tokens(ml_format % level)
         lvl_commands = get_tokens(commands_format % level)
+        if level == 'L0':
+            nl_tokens, ml_tokens = nl_tokens[:L0_LIM], ml_tokens[:L0_LIM]
+            lvl_commands = lvl_commands[:L0_COMMANDS_LIM]
         pc = zip(*(nl_tokens, ml_tokens))
         shuffle(pc)
         shuffle(pc)
