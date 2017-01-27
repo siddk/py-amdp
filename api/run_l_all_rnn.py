@@ -15,7 +15,7 @@ CONSTRAIN = False
 CONFUSION = True
 
 # CLEANED
-nl_format, ml_format = "../clean_data/intense_clean_no_punct/%s.en", "../clean_data/intense_clean_no_punct/%s.ml"
+nl_format, ml_format = "../clean_data/%s.en", "../clean_data/%s.ml"
 commands_format = "../clean_data/intense_clean_no_punct/%s.commands" if CONSTRAIN else "../clean_data/%s.commands"
 
 # RAW
@@ -27,6 +27,10 @@ prefix = {"agentInRegion": "aReg",
           "agentInRoom": "aRoom",
           "blockInRegion": "bReg",
           "blockInRoom": "bRoom",
+          "goNorth": "north",
+          "goSouth": "south",
+          "goEast": "east",
+          "goWest": "west",
           "agent0": "",
           "block0": "",
           "room0": "r0",
@@ -88,7 +92,6 @@ def train_model():
             if best_trans == example_ml:
                 correct += 1
             if best_trans[0] == example_ml[0]:
-                print "HERE!"
                 lvl_correct += 1
             total += 1
             

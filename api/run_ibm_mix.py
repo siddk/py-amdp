@@ -57,7 +57,10 @@ def train_model(level, test_level, data):
             correct += 1
         total += 1
     
-    print 'Test Accuracy:', float(correct) / float(total)
+    #print 'Test Accuracy:', float(correct) / float(total)
+    sys.stdout.write(str(float(correct) / float(total)) + ',')
+    sys.stdout.flush()
+    print
 
     
 if __name__ == "__main__":

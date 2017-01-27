@@ -1,0 +1,90 @@
+dilip@Valhalla:~/AMDP_Research/py-amdp/api$ ./run_single_rnn_mix.sh 
+L0 - L1
+0.206896551724,
+0.149425287356,
+0.51724137931,
+0.0459770114943,
+0.48275862069,
+1466.68user 66.52system 3:26.10elapsed 743%CPU (0avgtext+0avgdata 154240maxresident)k
+0inputs+88outputs (0major+1551175minor)pagefaults 0swaps
+
+
+L0 - L2
+0.53488372093,
+0.197674418605,
+0.116279069767,
+0.151162790698,
+0.162790697674,
+1481.98user 68.20system 3:29.02elapsed 741%CPU (0avgtext+0avgdata 154444maxresident)k
+0inputs+88outputs (0major+1557121minor)pagefaults 0swaps
+
+
+L1 - L0
+0.5,
+0.279069767442,
+0.383720930233,
+0.151162790698,
+0.325581395349,
+1490.44user 67.54system 3:29.04elapsed 745%CPU (0avgtext+0avgdata 155084maxresident)k
+0inputs+88outputs (0major+1511651minor)pagefaults 0swaps
+
+
+L1 - L2
+0.720930232558,
+0.686046511628,
+0.883720930233,
+0.720930232558,
+0.720930232558,
+1492.01user 68.33system 3:30.14elapsed 742%CPU (0avgtext+0avgdata 155628maxresident)k
+0inputs+88outputs (0major+1443620minor)pagefaults 0swaps
+
+
+L2 - L0
+0.104651162791,
+0.220930232558,
+0.151162790698,
+0.093023255814,
+0.139534883721,
+1494.87user 68.14system 3:30.38elapsed 742%CPU (0avgtext+0avgdata 154468maxresident)k
+0inputs+88outputs (0major+1466316minor)pagefaults 0swaps
+
+
+L2 - L1
+0.655172413793,
+0.540229885057,
+0.528735632184,
+0.563218390805,
+0.64367816092,
+1489.58user 67.83system 3:27.22elapsed 751%CPU (0avgtext+0avgdata 154164maxresident)k
+0inputs+88outputs (0major+1359497minor)pagefaults 0swaps
+
+
+L0 - L0
+0.813953488372,
+0.697674418605,
+0.802325581395,
+0.802325581395,
+0.767441860465,
+986.74user 43.10system 2:17.33elapsed 749%CPU (0avgtext+0avgdata 151872maxresident)k
+0inputs+88outputs (0major+444713minor)pagefaults 0swaps
+
+
+L1 - L1
+0.793103448276,
+0.83908045977,
+0.83908045977,
+0.83908045977,
+0.83908045977,
+1253.50user 58.56system 2:55.65elapsed 746%CPU (0avgtext+0avgdata 150844maxresident)k
+0inputs+88outputs (0major+916017minor)pagefaults 0swaps
+
+
+L2 - L2
+0.883720930233,
+0.906976744186,
+0.837209302326,
+0.906976744186,
+0.860465116279,
+597.79user 26.99system 1:28.79elapsed 703%CPU (0avgtext+0avgdata 149648maxresident)k
+0inputs+88outputs (0major+340631minor)pagefaults 0swaps
+
