@@ -1,6 +1,5 @@
-,Normal three room domain,,,,,,Expanded Three Room domain,,,
-proposition function,level solved at,AMDP planner time,std dev,No heuristic AMDP planner,std dev,,AMDP planner time,std dev,No heuristic AMDP planner,std dev
-agentInRoom agent0 room0,0,103.273,1.323224271,101.509,2.046614258,,34.124,0.3526763729,245.087,4.883113702
+proposition function,level solved at,small AMDP planner time,small AMDP std dev,small No heuristic AMDP planner,small base std dev,,large AMDP planner time,large AMDP std dev,large No heuristic AMDP planner,large base std dev
+"agentInRoom(agent0, room0)",0,103.273,1.323224271,101.509,2.046614258,,34.124,0.3526763729,245.087,4.883113702
 "agentInRoom(agent0, room0)",1,44.289,0.715683924,37.079,0.7660944844,,27.53,0.4700437214,138.388,3.533360363
 "agentInRoom(agent0, room0)",2,40.055,0.7437432185,32.83,0.6853984972,,29.157,0.5736622273,99.3,2.732358322
 "agentInRoom(agent0, room1)",0,395.22,4.660850523,162.541,4.423416363,,385.285,5.668421277,540.894,9.745982494
