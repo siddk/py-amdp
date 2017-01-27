@@ -10,7 +10,7 @@ CLEAN = False
 CONSTRAIN = False
 
 # CLEANED
-nl_format, ml_format = "../clean_data/intense_clean_no_punct/%s.en", "../clean_data/intense_clean_no_punct/%s.ml"
+nl_format, ml_format = "../clean_data/%s.en", "../clean_data/%s.ml"
 commands_format = "../clean_data/intense_clean_no_punct/%s.commands" if CONSTRAIN else "../clean_data/%s.commands"
 levels = ['L0', 'L1', 'L2']
 
