@@ -13,6 +13,19 @@ nl_format, ml_format = "../clean_data/%s.en", "../clean_data/%s.ml"
 
 levels = ['L0', 'L1', 'L2']
 
+rf_map = {"agentInRoom agent0 room0": "agentInRegion agent0 room0",
+          "agentInRoom agent0 room1": "agentInRegion agent0 room1",
+          "blockInRoom block0 room1": "blockInRegion block0 room1",
+          "blockInRoom block0 room2": "blockInRegion block0 room2",
+          "agentInRoom agent0 room1 blockInRoom block0 room2": "agentInRegion agent0 room1 blockInRegion block0 room2",
+          "agentInRoom agent0 room2 blockInRoom block0 room1": "agentInRegion agent0 room2 blockInRegion block0 room1",
+          "agentInRegion agent0 room0": "agentInRoom agent0 room0",
+          "agentInRegion agent0 room1": "agentInRoom agent0 room1",
+          "blockInRegion block0 room1": "blockInRoom block0 room1",
+          "blockInRegion block0 room2": "blockInRoom block0 room2",
+          "agentInRegion agent0 room1 blockInRegion block0 room2": "agentInRoom agent0 room1 blockInRoom block0 room2",
+          "agentInRegion agent0 room2 blockInRegion block0 room1": "agentInRoom agent0 room2 blockInRoom block0 room1"}
+
 def map_machine_lang(pf, lvl):
     pf = pf.replace('(', ' ').replace(',','').replace(')','')
     if 'L{0}'.format(lvl) in ['L1', 'L2']:
@@ -61,7 +74,8 @@ if __name__ == "__main__":
     print 'Model Loaded!'
 
     timer = {'L0 goNorth':[], 'L0 goSouth':[], 'L0 goEast':[], 'L0 goWest':[],}
-    out_header = ['small AMDP planner time',
+    out_header = ['predicted RF',
+                  'small AMDP planner time',
                   'small AMDP std dev',
                   'small No heuristic AMDP planner',
                   'small base std dev',
@@ -94,4 +108,13 @@ if __name__ == "__main__":
 
         for nl_command in pc:
             rf, _ = m.score(nl_command)
-            writer.writerow(timer[' '.join(rf)])
+            output = [' '.join(rf)] + timer[' '.join(rf)]
+            if rf[0] != 'L0':
+                l0_prop = rf
+                l0_prop[0] = 'L0'
+                l0_prop[1:] = rf_map[' '.join(l0_prop[1:])].split()
+                output[3] = timer[' '.join(l0_prop)][2]
+                output[4] = timer[' '.join(l0_prop)][3]
+                output[7] = timer[' '.join(l0_prop)][6]
+                output[8] = timer[' '.join(l0_prop)][7]
+            writer.writerow(output)
