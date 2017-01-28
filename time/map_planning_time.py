@@ -73,16 +73,20 @@ if __name__ == "__main__":
     m = load_model()
     print 'Model Loaded!'
 
-    timer = {'L0 goNorth':[], 'L0 goSouth':[], 'L0 goEast':[], 'L0 goWest':[],}
+    timer = {}
     out_header = ['predicted RF',
                   'small AMDP planner time',
                   'small AMDP std dev',
                   'small No heuristic AMDP planner',
                   'small base std dev',
+                  'small flat planner',
+                  'small flat std dev',
                   'large AMDP planner time',
                   'large AMDP std dev',
                   'large No heuristic AMDP planner',
-                  'large base std dev']
+                  'large base std dev',
+                  'large flat planner',
+                  'large flat std dev']
 
     rfs = []
     pc = []
@@ -117,17 +121,21 @@ if __name__ == "__main__":
                           row['large No heuristic AMDP planner'],
                           row['large base std dev']]
 
-    with open('./new_data_planning_times.csv', 'wb') as out:
+    with open('./data_planning_times.csv', 'wb') as out:
         writer = csv.writer(out)
         writer.writerow(out_header)
         for rf in rfs:
+            if ' '.join(rf) not in timer.keys():
+                writer.writerow([])
+                continue
+            
             output = [' '.join(rf)] + timer[' '.join(rf)]
             if rf[0] != 'L0':
-                l0_prop = list(rf) # THIS ALSO - UGH
-                l0_prop[0] = 'L0'
-                l0_prop[1:] = rf_map[' '.join(l0_prop[1:])].split()
-                output[3] = timer[' '.join(l0_prop)][2]
-                output[4] = timer[' '.join(l0_prop)][3]
-                output[7] = timer[' '.join(l0_prop)][6]
-                output[8] = timer[' '.join(l0_prop)][7]
+                rf = list(rf)
+                rf[0] = 'L0'
+                rf[1:] = rf_map[' '.join(rf[1:])].split()
+            output.insert(5, timer[' '.join(rf)][2])
+            output.insert(6, timer[' '.join(rf)][3])
+            output.insert(11, timer[' '.join(rf)][6])
+            output.insert(12, timer[' '.join(rf)][7])
             writer.writerow(output)
