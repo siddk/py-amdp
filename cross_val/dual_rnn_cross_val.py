@@ -8,12 +8,12 @@ import random
 import pickle
 import tensorflow as tf
 
-NUM_TRIALS = 3
+NUM_TRIALS = 1
 FOLDS = 10
 
 levels = ['L0', 'L1', 'L2']
 
-def run_cross_val(data, out, N_10_EPOCHS=5):
+def run_cross_val(data, out, i, N_10_EPOCHS=5):
     with open(data, 'r') as f:
         pc, commands = pickle.load(f)
     
@@ -33,42 +33,42 @@ def run_cross_val(data, out, N_10_EPOCHS=5):
     assert(len(l0_range) == len(l1_range) == len(l2_range) == 11)
     
     lvl_selection, reward_selection = [], []
-    for i in range(FOLDS):
-        tf.reset_default_graph()
-        random.seed(21)
-        val = {'L0': pc['L0'][l0_range[i]:l0_range[i + 1]],
-               'L1': pc['L1'][l1_range[i]:l1_range[i + 1]],
-               'L2': pc['L2'][l2_range[i]:l2_range[i + 1]]}
+    # for i in range(FOLDS):
+    tf.reset_default_graph()
+    random.seed(21)
+    val = {'L0': pc['L0'][l0_range[i]:l0_range[i + 1]],
+            'L1': pc['L1'][l1_range[i]:l1_range[i + 1]],
+            'L2': pc['L2'][l2_range[i]:l2_range[i + 1]]}
 
-        l0_train = pc['L0'][:l0_range[i]] + pc['L0'][l0_range[i + 1]:]
-        l1_train = pc['L1'][:l1_range[i]] + pc['L1'][l1_range[i + 1]:]
-        l2_train = pc['L2'][:l2_range[i]] + pc['L2'][l2_range[i + 1]:]
+    l0_train = pc['L0'][:l0_range[i]] + pc['L0'][l0_range[i + 1]:]
+    l1_train = pc['L1'][:l1_range[i]] + pc['L1'][l1_range[i + 1]:]
+    l2_train = pc['L2'][:l2_range[i]] + pc['L2'][l2_range[i + 1]:]
 
-        model = RNNDual(l0_train, l1_train, l2_train, commands['L0'], commands['L1'], commands['L2'])
-        for idx in range(N_10_EPOCHS):
-            model.fit(max(map(lambda z: len(z), [l0_train, l1_train, l2_train])))
-        
-        correct, lvl_correct, total = 0, 0, 0
-        for lvl in levels:
-            for (example_en, example_ml) in val[lvl]:
-                # Pick Level, Translation
-                best_trans, score, level, level_score = model.score(example_en)
-                if lvl == levels[level]:
-                    lvl_correct += 1
-                    if best_trans == example_ml:
-                        correct += 1
-                total += 1
-        
-        print 'Level Selection:', float(lvl_correct) / float(total)
-        print 'Reward Selection:', float(correct) / float(total)
-
-        lvl_selection.append(float(lvl_correct) / float(total))
-        reward_selection.append(float(correct) / float(total))
+    model = RNNDual(l0_train, l1_train, l2_train, commands['L0'], commands['L1'], commands['L2'])
+    for idx in range(N_10_EPOCHS):
+        model.fit(max(map(lambda z: len(z), [l0_train, l1_train, l2_train])))
     
-    with open(out_path, 'w') as f:
-        f.write("Fold Level Selection Accuracies: %s\nFold Reward Function Accuracies: %s\n" % (str(lvl_selection), str(reward_selection)))
-        f.write("Average Level Selection Accuracy: %s\n" % str(sum(lvl_selection) / len(lvl_selection)))
-        f.write("Average Reward Function Accuracy: %s\n" % str(sum(reward_selection) / len(reward_selection)))
+    correct, lvl_correct, total = 0, 0, 0
+    for lvl in levels:
+        for (example_en, example_ml) in val[lvl]:
+            # Pick Level, Translation
+            best_trans, score, level, level_score = model.score(example_en)
+            if lvl == levels[level]:
+                lvl_correct += 1
+                if best_trans == example_ml:
+                    correct += 1
+            total += 1
+    
+    print 'Level Selection:', float(lvl_correct) / float(total)
+    print 'Reward Selection:', float(correct) / float(total)
+
+    # lvl_selection.append(float(lvl_correct) / float(total))
+    # reward_selection.append(float(correct) / float(total))
+    
+    # with open(out_path, 'w') as f:
+    #     f.write("Fold Level Selection Accuracies: %s\nFold Reward Function Accuracies: %s\n" % (str(lvl_selection), str(reward_selection)))
+    #     f.write("Average Level Selection Accuracy: %s\n" % str(sum(lvl_selection) / len(lvl_selection)))
+    #     f.write("Average Reward Function Accuracy: %s\n" % str(sum(reward_selection) / len(reward_selection)))
 
 if __name__ == "__main__":
     import sys
@@ -81,5 +81,5 @@ if __name__ == "__main__":
     data_path = "%s_data.pik" % ("clean" if clean else "raw")
 
     for trial in range(NUM_TRIALS):
-        out_path = "%s_dual_rnn_results_%s.txt" % ("clean" if clean else "raw", str(trial))
-        run_cross_val(data_path, out_path)
+        out_path = "%s_dual_rnn_results_%s.txt" % ("clean" if clean else "raw", args[2])
+        run_cross_val(data_path, out_path, int(args[3]))

@@ -28,6 +28,7 @@ def run_cross_val(data, out, N_10_EPOCHS=5):
     l0_range = range(0, l0_len, l0_len / FOLDS)
     l1_range = range(0, l1_len, l1_len / FOLDS)
     l2_range = range(0, l2_len, l2_len / FOLDS)
+    # l_range = range(0, min(l0_len, l1_len, l2_len), min(l0_len, l1_len, l2_len) / FOLDS)
     assert(len(l0_range) == len(l1_range) == len(l2_range) == 11)
     
     lvl_selection, reward_selection = [], []
