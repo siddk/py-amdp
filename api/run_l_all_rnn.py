@@ -12,7 +12,7 @@ import pickle
 import sys
 
 CONSTRAIN = False
-CONFUSION = True
+CONFUSION = False
 
 # CLEANED
 nl_format, ml_format = "../clean_data/%s.en", "../clean_data/%s.ml"
@@ -101,7 +101,7 @@ def train_model():
         print 'Test Accuracy:', float(correct) / float(total)
         print 'Level Selection Accuracy:', float(lvl_correct) / float(total)
     
-    model.saver.save(model.session, 'l_all_rnn_ckpt/rnn.ckpt')
+    model.saver.save(model.session, 'single_rnn_1_28_17/rnn.ckpt')
     with open('l_all_rnn_ckpt/vocab.pik', 'w') as f:
         pickle.dump((pc_train, ml_commands), f)
     
@@ -115,11 +115,11 @@ def load_model():
     with open('l_all_rnn_ckpt/vocab.pik', 'r') as f:
         pc_train, ml_commands = pickle.load(f)
     model = RNNClassifier(pc_train, ml_commands)
-    model.saver.restore(model.session, 'l_all_rnn_ckpt/rnn.ckpt')
+    model.saver.restore(model.session, 'single_rnn_1_28_17/rnn.ckpt')
     return model
 
 if __name__ == "__main__":
-    if not os.path.exists("l_all_rnn_ckpt/checkpoint"):
+    if not os.path.exists("single_rnn_1_28_17/checkpoint"):
         train_model()
     m = load_model()
     print 'Model Loaded!'
