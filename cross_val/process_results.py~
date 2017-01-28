@@ -1,0 +1,28 @@
+"""
+process_results.py
+
+Parse output results files for cross validation models and produce mean level inference and grounding accuracies
+"""
+
+import sys
+
+model_map = {'IBM2': 'raw_ibm_results_{0}.txt',
+             'MNN': 'raw_dual_nn_results_{0}.txt',
+             'MRNN': 'raw_dual_rnn_results_{0}.txt',
+             'SRNN': 'raw_single_rnn_results_{0}.txt'}
+
+
+if __name__ == "__main__":
+    # Read Command Line Arguments
+    args = sys.argv
+    model = args[1]
+
+    if not os.path.exists("%s_single_rnn_ckpt/checkpoint" % lvl):
+        train_model(lvl)
+    m = load_model(lvl)
+    print 'Model Loaded!'
+    while True:
+        nl_command = raw_input("Enter a Natural Language Command: ")
+        rf, _ = m.score(nl_command.split())
+        print 'Predicted RF: %s' % rf
+        print ""

@@ -83,9 +83,17 @@ def train_model():
     for idx in range(5):
         model.fit(len(pc_train))
         correct, total, lvl_correct = 0, 0, 0
+        l0, l1, l2 = 0, 0, 0
         for i in range(len(pc_test) - 1):
             # Get test command
             example_en, example_ml = pc_test[i]
+            print example_en
+            if example_ml[0] == 'L0':
+                l0 += 1
+            elif example_ml[0] == 'L1':
+                l1 += 1
+            elif example_ml[0] == 'L2':
+                l2 += 1
 
             # Pick Translation
             best_trans, score = model.score(example_en)
@@ -100,9 +108,10 @@ def train_model():
 
         print 'Test Accuracy:', float(correct) / float(total)
         print 'Level Selection Accuracy:', float(lvl_correct) / float(total)
+        print 'L0:', l0, 'L1:', l1, 'L2:', l2
     
     model.saver.save(model.session, 'single_rnn_1_28_17/rnn.ckpt')
-    with open('l_all_rnn_ckpt/vocab.pik', 'w') as f:
+    with open('single_rnn_1_28_17/vocab.pik', 'w') as f:
         pickle.dump((pc_train, ml_commands), f)
     
     if CONFUSION:
@@ -112,7 +121,7 @@ def train_model():
         avg_df.to_csv('l_all_rnn_confusion.csv', encoding='utf-8')
 
 def load_model():
-    with open('l_all_rnn_ckpt/vocab.pik', 'r') as f:
+    with open('single_rnn_1_28_17/vocab.pik', 'r') as f:
         pc_train, ml_commands = pickle.load(f)
     model = RNNClassifier(pc_train, ml_commands)
     model.saver.restore(model.session, 'single_rnn_1_28_17/rnn.ckpt')
@@ -125,6 +134,8 @@ if __name__ == "__main__":
     print 'Model Loaded!'
     while True:
         nl_command = raw_input("Enter a Natural Language Command: ")
+        x = nl_command.split()
+        print x
         rf, _ = m.score(nl_command.split())
         print 'Predicted RF: %s' % rf
         print ""
