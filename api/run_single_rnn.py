@@ -93,12 +93,11 @@ def train_model(level):
             avg_df.loc[i] /= 0.01 * sum(avg_df.loc[i])
         avg_df.to_csv('%s_single_rnn_confusion.csv' % level, encoding='utf-8')
 
-def load_model(level):
-    with open('%s_single_rnn_ckpt/vocab.pik' % level, 'r') as f:
-        pc_train = pickle.load(f)
-    ml_commands = get_tokens(commands_format % level)
+def load_model():
+    with open('single_rnn_1_28_17/vocab.pik', 'r') as f:
+        pc_train, ml_commands = pickle.load(f)
     model = RNNClassifier(pc_train, ml_commands)
-    model.saver.restore(model.session, '%s_single_rnn_ckpt/rnn.ckpt' % level)
+    model.saver.restore(model.session, 'single_rnn_1_28_17/rnn.ckpt')
     return model
 
 if __name__ == "__main__":
